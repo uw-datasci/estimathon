@@ -7,12 +7,12 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { code } = body;
 
-  // get user from cookies, check if user is valid
-
+  // Need to submit a team code to make a team
   if (!code) {
     return NextResponse.json({ error: "Team code required" }, { status: 400 });
   }
 
+  // Find to see if a team with the same name exists
   const existing = await prisma.team.findFirst({ where: { code } });
   if (existing) {
     return NextResponse.json(
@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Make team
   const team = await prisma.team.create({
     data: {
       code: code,
@@ -32,7 +33,3 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ message: "Team created", team });
 }
-
-/*
-use cookies to get user
-*/

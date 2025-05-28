@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user) {
-      // If user isn't in database, add the user
+      // If user isn't in database, add the user to database
       user = await prisma.user.create({
         data: {
           clubId: "",
@@ -56,13 +56,6 @@ export async function POST(req: NextRequest) {
           email: data.email,
         },
       });
-    }
-
-    if (user.teamId) {
-      return NextResponse.json(
-        { error: "User is already on a team" },
-        { status: 400 }
-      );
     }
 
     // Update user with new teamId
