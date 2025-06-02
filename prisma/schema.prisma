@@ -22,16 +22,29 @@ model Team {
   members   User[]   
   eventId   String
   submissions Submission[]
+  score     Int
+  goodInterval Int   @default(0)
+}
+
+model Question {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  text      String
+  answer    Float
+  released  Boolean  @default(false)
+  submissions Submission[]
 }
 
 model Submission {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   teamId    String    @db.ObjectId
-  questionId String
+  questionId String   @db.ObjectId
   min_value Int
   max_value Int
   createdAt DateTime  @default(now())
   team        Team      @relation(fields: [teamId], references: [id])
+  question    Question  @relation(fields: [questionId], references: [id])
+
+  @@unique([teamId, questionId])
 }
 
 model Event {
