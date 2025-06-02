@@ -33,3 +33,15 @@ model Submission {
   createdAt DateTime  @default(now())
   team        Team      @relation(fields: [teamId], references: [id])
 }
+
+model Event {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  startTime  DateTime
+  endTime    DateTime
+  timerDuration Int
+  submissionLimit Int
+  leaderboardVisibleUntil Int // seconds before end
+  isActive Boolean
+  createdAt  DateTime  @default(now())
+}
