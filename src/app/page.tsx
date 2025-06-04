@@ -1,10 +1,7 @@
-import UserBanner from "../components/UserBanner";
+import WaitingRoom from "@/components/WaitingRoom";
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-4">
-      <h1 className="text-3xl font-bold">UW DSC Estimathon</h1>
-      <UserBanner />
-    </main>
+    <WaitingRoom teamId="123" />
   );
 }
