@@ -11,19 +11,22 @@ export async function GET(request: Request) {
       select: {
         id: true,
         isActive: true,
+        name: true,
+        startTime: true,
+        endTime: true,
+        timerDuration: true,
       },
     });
-    console.log("Result:", result);
     if (!result) {
       throw new Error("No events found");
     }
 
-    const eventid = result.id;
-    return NextResponse.json({
-      status: "success",
-      eventid,
-      isActive: result?.isActive,
-    });
+    return NextResponse.json(
+      {
+        event: result,
+      },
+      { status: 200 }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { status: "error", message: error?.message || "Internal Server Error" },
