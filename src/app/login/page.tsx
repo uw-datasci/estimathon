@@ -34,33 +34,63 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-6">
-      <h1 className="text-3xl font-bold">Sign in</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-xs">
-        <input
-          type="email"
-          required
-          placeholder="Email"
-          className="border p-2 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          required
-          placeholder="Password"
-          className="border p-2 rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button
-          type="submit"
-          className="bg-black text-white rounded p-2 hover:bg-gray-800"
-        >
-          Sign in
-        </button>
-      </form>
+    <main className="min-h-screen bg-gradient-to-br from-portage-50 to-portage-100 flex items-center justify-center p-6">
+      <div className="bg-white/60 backdrop-blur-md rounded-3xl p-8 max-w-sm w-full">
+        <h1 className="text-3xl text-portage-700 text-center">
+          Sign in 
+        </h1>
+        <p className="text-md text-portage-700 text-center mb-6">
+          (DSC Account)
+        </p>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input
+            type="email"
+            required
+            placeholder="Email"
+            className="
+              border border-portage-200
+              focus:border-portage-500 focus:ring-2 focus:ring-portage-200
+              outline-none
+              p-3 rounded-2xl
+              placeholder-portage-400
+              text-portage-400
+            "
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            required
+            placeholder="Password"
+            className="
+              border border-portage-200
+              focus:border-portage-500 focus:ring-2 focus:ring-portage-200
+              outline-none
+              p-3 rounded-2xl
+              placeholder-portage-400
+              text-portage-400
+            "
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {error && (
+            <p className="text-red-600 text-sm mt-1">{error}</p>
+          )}
+          <button
+            type="submit"
+            className="
+              mt-2
+              bg-portage-500 hover:bg-portage-600
+              text-white font-semibold
+              rounded-2xl p-3
+              shadow-md
+              transition
+            "
+          >
+            Sign in
+          </button>
+        </form>
+      </div>
     </main>
   );
 }

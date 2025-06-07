@@ -30,8 +30,12 @@ export default function WaitingRoom({ teamId }: Props) {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center gap-10 px-6 sm:px-12 bg-gradient-to-br from-white to-portage-200">
-      <header className="absolute left-6 top-6 text-3xl font-bold text-portage-600">
-        UW DSC<span className="inline-block ml-1 h-[3px] w-4 bg-portage-200 align-baseline" />
+      <header className="absolute left-6 top-6">
+        <img
+          src="/dsc.svg"
+          alt="UW DSC logo"
+          className="h-16 w-auto text-portage-600"
+        />      
       </header>
 
       <h2 className="text-2xl sm:text-3xl font-medium text-portage-600">
