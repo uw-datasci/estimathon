@@ -55,3 +55,12 @@ export interface Submission {
   team?: Team;
   question?: Question;
 }
+
+export interface Event {
+  id: string;
+  name: string;
+  start_time: string;
+  end_time: string;
+  submission_limit: number;
+  created_at: string;
+}
