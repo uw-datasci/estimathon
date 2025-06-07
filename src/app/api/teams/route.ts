@@ -1,29 +1,26 @@
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { NextResponse } from "next/server";
+import { supabase } from "@/lib/supabase";
 
 export async function GET() {
-  const prisma = new PrismaClient();
-
   try {
-    const teams = await prisma.team.findMany({
-      include: {
-        members: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-        submissions: true, // includes all submissions per team
-      },
-    });
+    const { data: teams, error } = await supabase
+      .from('teams')
+      .select(`
+        *,
+        members:users(name, email),
+        submissions(*)
+      `);
+
+    if (error) {
+      throw error;
+    }
+
     return NextResponse.json(teams);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching teams: ", error);
     return NextResponse.json(
       { error: "Failed to fetch teams" },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

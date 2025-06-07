@@ -1,14 +1,38 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { supabase } from "@/lib/supabase";
 
 export async function GET(
   _req: Request,
   { params }: { params: { teamId: string } }
 ) {
   const { teamId } = params;
-  const submissions = await prisma.submission.findMany({ where: { teamId } });
-  // TODO: Join with Question model to check correctness and score
-  return NextResponse.json(submissions);
+  
+  const { data: submissions, error } = await supabase
+    .from('submissions')
+    .select(`
+      *,
+      question:questions(*)
+    `)
+    .eq('team_id', teamId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Calculate correctness and score for each submission
+  const submissionsWithScore = submissions?.map(submission => {
+    const question = submission.question;
+    const isCorrect = question && 
+      submission.min_value <= question.answer && 
+      submission.max_value >= question.answer;
+    
+    return {
+      ...submission,
+      is_correct: isCorrect,
+      interval_size: submission.max_value - submission.min_value
+    };
+  });
+
+  return NextResponse.json(submissionsWithScore);
 }

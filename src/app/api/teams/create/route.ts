@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-import { cookies } from "next/headers";
+import { supabase } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
-  const prisma = new PrismaClient();
   const body = await req.json();
   const { code } = body;
 
@@ -12,24 +10,39 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Team code required" }, { status: 400 });
   }
 
-  // Find to see if a team with the same name exists
-  const existing = await prisma.team.findFirst({ where: { code } });
+  // Check if team with same code exists
+  const { data: existing, error: checkError } = await supabase
+    .from('teams')
+    .select('id')
+    .eq('code', code)
+    .single();
+
+  if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found"
+    return NextResponse.json({ error: checkError.message }, { status: 500 });
+  }
+
   if (existing) {
     return NextResponse.json(
-      { error: "Team with name already exists" },
+      { error: "Team with code already exists" },
       { status: 400 }
     );
   }
 
-  // Make team
-  const team = await prisma.team.create({
-    data: {
+  // Create team
+  const { data: team, error } = await supabase
+    .from('teams')
+    .insert({
       code: code,
-      eventId: "",
-    },
-  });
+      event_id: "",
+      score: 0,
+      good_interval: 0
+    })
+    .select()
+    .single();
 
-  await prisma.$disconnect();
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
   return NextResponse.json({ message: "Team created", team });
 }
