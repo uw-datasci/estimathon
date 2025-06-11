@@ -1,10 +1,12 @@
 "use client";
+
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { login } from "@/store/loginTokenSlice";
 import { sendSignInInfo } from "@/utils/apiCalls";
 import { useRouter, useSearchParams } from "next/navigation";
+import Backdrop from "@/components/Backdrop";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -34,62 +36,71 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-portage-50 to-portage-100 flex items-center justify-center p-6">
-      <div className="bg-white/60 backdrop-blur-md rounded-3xl p-8 max-w-sm w-full">
-        <h1 className="text-3xl text-portage-700 text-center">
-          Sign in 
-        </h1>
-        <p className="text-md text-portage-700 text-center mb-6">
-          (DSC Account)
-        </p>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="email"
-            required
-            placeholder="Email"
-            className="
-              border border-portage-200
-              focus:border-portage-500 focus:ring-2 focus:ring-portage-200
-              outline-none
-              p-3 rounded-2xl
-              placeholder-portage-400
-              text-portage-400
-            "
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            required
-            placeholder="Password"
-            className="
-              border border-portage-200
-              focus:border-portage-500 focus:ring-2 focus:ring-portage-200
-              outline-none
-              p-3 rounded-2xl
-              placeholder-portage-400
-              text-portage-400
-            "
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {error && (
-            <p className="text-red-600 text-sm mt-1">{error}</p>
-          )}
-          <button
-            type="submit"
-            className="
-              mt-2
-              bg-portage-500 hover:bg-portage-600
-              text-white font-semibold
-              rounded-2xl p-3
-              shadow-md
-              transition
-            "
-          >
+    <main className="relative min-h-screen overflow-hidden">
+      <header className="absolute left-6 top-6 z-10">
+        <img
+          src="/dsc_white.svg"
+          alt="UW DSC logo"
+          className="h-16 w-auto"
+        />
+      </header>
+      <div
+      className="
+        absolute inset-0
+        bg-black/40
+      "
+      />
+      <Backdrop />
+
+      {/* top-left header */}
+      <div className="absolute left-6 top-30 z-10 text-white">
+        <h2 className="text-xl sm:text-3xl font-light">Estimathon S25</h2>
+      </div>
+
+      {/* center card */}
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
+        <div className="w-full max-w-sm bg-portage-950/90 backdrop-blur-lg rounded-lg p-8 shadow-xl">
+          <h2 className="text-2xl text-white text-center font-light mt-1 mb-6">
             Sign in
-          </button>
-        </form>
+          </h2>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <input
+              type="email"
+              required
+              placeholder="Email"
+              className="w-full bg-white text-portage-900 placeholder-portage-400 px-4 py-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-portage-200"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              required
+              placeholder="Password"
+              className="w-full bg-white text-portage-900 placeholder-portage-400 px-4 py-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-portage-200"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            {error && (
+              <p className="text-red-400 text-sm mt-1">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              className="
+                mt-4
+                w-full
+                bg-portage-500 hover:bg-portage-600
+                text-white font-semibold
+                rounded-sm py-3
+                transition-shadow shadow-sm hover:shadow-md
+              "
+            >
+              Join
+            </button>
+          </form>
+        </div>
       </div>
     </main>
   );
