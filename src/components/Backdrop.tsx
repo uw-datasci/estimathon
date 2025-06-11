@@ -67,13 +67,14 @@ export default function Backdrop() {
           fill="none"
         >
           <circle
-            cx="1260"
+            cx="1500"
             cy="640"
-            r="450"
+            r="650"
             stroke="white"
             strokeWidth="1"
             opacity="1"
           />
+          {/* left circle */}
           <circle
             cx="500"
             cy="300"
@@ -83,23 +84,24 @@ export default function Backdrop() {
             opacity="1"
           />
           <circle
-            cx="1270"
-            cy="340"
-            r="150"
+            cx="1470"
+            cy="160"
+            r="170"
             stroke="white"
             strokeWidth="1"
             opacity="1"
           />
           <circle
-            cx="1305"
-            cy="375"
-            r="100"
+            cx="1490"
+            cy="200"
+            r="125"
             stroke="white"
             strokeWidth="1"
             opacity="1"
           />
-          <circle cx="1400" cy="265" r="6" fill="white" />
-          <circle cx="813" cy="690" r="6" fill="white" />
+          <circle cx="1600" cy="50" r="10" fill="white" />
+          <circle cx="850" cy="660" r="10" fill="white" />
+          <circle cx="1540" cy="315" r="10" fill="white" />
         </svg>
         
         {/** Big dark circle bottom-left **/}
