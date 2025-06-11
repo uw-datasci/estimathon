@@ -7,29 +7,63 @@ interface Props { teamId: string }
 export default function WaitingRoom({ teamId }: Props) {
   const [remaining, setRemaining] = useState<number | null>(null);
   const [members, setMembers] = useState<{ id: string; name: string }[]>([]);
+  const [eventStartTime, setEventStartTime] = useState<string | null>(null);
 
-//   useEffect(() => {
-//     socket.emit("joinTeamRoom", teamId);       // room for live roster
+  // Fetch event data from backend
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const response = await fetch('/api/events');
+        if (response.ok) {
+          const event = await response.json();
+          setEventStartTime(event.start_time);
+        } else {
+          console.error('Failed to fetch event data');
+        }
+      } catch (error) {
+        console.error('Error fetching event:', error);
+      }
+    };
 
-//     socket.on("timer", ({ remaining }) => setRemaining(remaining));
-//     socket.on("teamRoster", (list) => setMembers(list));
-//     socket.on("quizStarted", () => {
-//       window.location.href = "/quiz";
-//     });
+    fetchEvent();
+  }, []);
 
-//     return () => {
-//       socket.off("timer");
-//       socket.off("teamRoster");
-//       socket.off("quizStarted");
-//     };
-//   }, [teamId]);
+  // Timer effect to calculate remaining time
+  useEffect(() => {
+    if (!eventStartTime) return;
 
-  const clock = remaining != null
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const startTime = new Date(eventStartTime).getTime();
+      const timeLeft = startTime - now;
+
+      if (timeLeft <= 0) {
+        setRemaining(0);
+        // Optionally redirect to quiz when timer reaches 0
+        // window.location.href = "/quiz";
+      } else {
+        setRemaining(timeLeft);
+      }
+    };
+
+    // Update immediately
+    updateTimer();
+
+    // Set up interval to update every second
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
+  }, [eventStartTime]);
+
+
+  const clock = remaining != null && remaining > 0
     ? new Date(remaining).toISOString().substr(11, 8)
+    : remaining === 0
+    ? "00:00:00"
     : "--:--:--";
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-10 px-6 sm:px-12 bg-gradient-to-br from-white to-portage-200">
+    <main className="min-h-screen w-full flex flex-col items-center justify-center gap-10 px-6 sm:px-12 bg-gradient-to-br from-white to-portage-200">
       <header className="absolute left-6 top-6">
         <img
           src="/dsc.svg"
@@ -45,7 +79,7 @@ export default function WaitingRoom({ teamId }: Props) {
       <div className="rounded-xl bg-portage-600 px-14 py-12 text-white shadow-lg">
         <p className="text-5xl sm:text-6xl font-semibold tabular-nums">{clock}</p>
         <p className="mt-3 text-sm sm:text-base text-white/90">
-          Until questions release
+          {remaining === 0 ? "Event has started!" : "Until questions release"}
         </p>
       </div>
 
