@@ -1,10 +1,9 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
-import { PrismaClient } from "@prisma/client";
+import { supabase } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
-  const prisma = new PrismaClient();
   const { teamCode } = await req.json();
   const token = (await cookies()).get("token")?.value;
 
@@ -24,49 +23,75 @@ export async function POST(req: NextRequest) {
 
     const userEmail = data.email;
 
-    // Get team
-    const team = await prisma.team.findFirst({
-      where: { code: teamCode },
-      include: { members: true },
-    });
+    // Get team with member count
+    const { data: team, error: teamError } = await supabase
+      .from('teams')
+      .select(`
+        *,
+        members:users(id)
+      `)
+      .eq('code', teamCode)
+      .single();
 
-    if (!team) {
+    if (teamError) {
       return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
     // Check if team is full
-    if (team.members.length >= 8) {
+    if (team.members && team.members.length >= 8) {
       return NextResponse.json(
         { error: "Team is full (max 8 members)" },
         { status: 400 }
       );
     }
 
-    // Check if user already joined a team
-    let user = await prisma.user.findUnique({
-      where: { email: userEmail },
-    });
+    // Check if user exists, create if not
+    const { data: existingUser, error: userCheckError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', userEmail)
+      .single();
 
-    if (!user) {
-      // If user isn't in database, add the user to database
-      user = await prisma.user.create({
-        data: {
-          clubId: "",
+    let user;
+    if (userCheckError && userCheckError.code === 'PGRST116') {
+      // User doesn't exist, create them
+      const { data: newUser, error: createError } = await supabase
+        .from('users')
+        .insert({
+          club_id: "",
           name: data.username,
           email: data.email,
-        },
-      });
-    }
+          team_id: team.id
+        })
+        .select()
+        .single();
 
-    // Update user with new teamId
-    const updatedUser = await prisma.user.update({
-      where: { email: userEmail },
-      data: { teamId: team.id },
-    });
+      if (createError) {
+        return NextResponse.json({ error: createError.message }, { status: 500 });
+      }
+      
+      user = newUser;
+    } else if (existingUser) {
+      // User exists, update their team
+      const { data: updatedUser, error: updateError } = await supabase
+        .from('users')
+        .update({ team_id: team.id })
+        .eq('email', userEmail)
+        .select()
+        .single();
+
+      if (updateError) {
+        return NextResponse.json({ error: updateError.message }, { status: 500 });
+      }
+
+      user = updatedUser;
+    } else {
+      return NextResponse.json({ error: userCheckError.message }, { status: 500 });
+    }
 
     return NextResponse.json({
       message: "User successfully joined team",
-      user: updatedUser,
+      user: user,
     });
   } catch (error) {
     console.error("Join error:", error);
@@ -74,7 +99,5 @@ export async function POST(req: NextRequest) {
       { error: "Internal server error" },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

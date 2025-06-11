@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { supabase } from "@/lib/supabase";
 
 export async function GET(
   _req: Request,
   { params }: { params: { teamId: string } }
 ) {
   const { teamId } = params;
-  const count = await prisma.submission.count({ where: { teamId } });
-  return NextResponse.json({ remaining: 18 - count });
+  
+  const { count, error } = await supabase
+    .from('submissions')
+    .select('*', { count: 'exact', head: true })
+    .eq('team_id', teamId);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ remaining: 18 - (count || 0) });
 }

@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { supabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   const { teamId, questionId, min_value, max_value } = await req.json();
@@ -9,19 +7,43 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
 
-  const count = await prisma.submission.count({ where: { teamId } });
-  if (count >= 18) {
+  // Check submission count
+  const { count, error: countError } = await supabase
+    .from('submissions')
+    .select('*', { count: 'exact', head: true })
+    .eq('team_id', teamId);
+
+  if (countError) {
+    return NextResponse.json({ error: countError.message }, { status: 500 });
+  }
+
+  if (count && count >= 18) {
     return NextResponse.json(
       { error: "Submission limit reached" },
       { status: 403 }
     );
   }
 
-  const submission = await prisma.submission.upsert({
-    where: { teamId_questionId: { teamId, questionId } },
-    update: { min_value, max_value },
-    create: { teamId, questionId, min_value, max_value },
-  });
+  // Upsert submission
+  const { data: submission, error } = await supabase
+    .from('submissions')
+    .upsert(
+      { 
+        team_id: teamId, 
+        question_id: questionId, 
+        min_value, 
+        max_value 
+      },
+      { 
+        onConflict: 'team_id,question_id' 
+      }
+    )
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 
   return NextResponse.json(submission);
 }
