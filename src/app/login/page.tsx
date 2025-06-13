@@ -1,10 +1,12 @@
 "use client";
+
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { login } from "@/store/loginTokenSlice";
 import { sendSignInInfo } from "@/utils/apiCalls";
 import { useRouter, useSearchParams } from "next/navigation";
+import Backdrop from "@/components/Backdrop";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -34,33 +36,72 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-6">
-      <h1 className="text-3xl font-bold">Sign in</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full max-w-xs">
-        <input
-          type="email"
-          required
-          placeholder="Email"
-          className="border p-2 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+    <main className="relative min-h-screen overflow-hidden">
+      <header className="absolute left-6 top-6 z-10">
+        <img
+          src="/dsc_white.svg"
+          alt="UW DSC logo"
+          className="h-16 w-auto"
         />
-        <input
-          type="password"
-          required
-          placeholder="Password"
-          className="border p-2 rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button
-          type="submit"
-          className="bg-black text-white rounded p-2 hover:bg-gray-800"
-        >
-          Sign in
-        </button>
-      </form>
+      </header>
+      <div
+      className="
+        absolute inset-0
+        bg-black/40
+      "
+      />
+      <Backdrop />
+
+      {/* top-left header */}
+      <div className="absolute left-6 top-30 z-10 text-white">
+        <h2 className="text-xl sm:text-3xl font-light">Estimathon S25</h2>
+      </div>
+
+      {/* center card */}
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
+        <div className="w-full max-w-sm bg-portage-950/90 backdrop-blur-lg rounded-lg p-8 shadow-xl">
+          <h2 className="text-2xl text-white text-center font-light mt-1 mb-6">
+            Sign in
+          </h2>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <input
+              type="email"
+              required
+              placeholder="Email"
+              className="w-full bg-white text-portage-900 placeholder-portage-400 px-4 py-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-portage-200"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              required
+              placeholder="Password"
+              className="w-full bg-white text-portage-900 placeholder-portage-400 px-4 py-3 rounded-sm focus:outline-none focus:ring-2 focus:ring-portage-200"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            {error && (
+              <p className="text-red-400 text-sm mt-1">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              className="
+                mt-4
+                w-full
+                bg-portage-500 hover:bg-portage-600
+                text-white font-semibold
+                rounded-sm py-3
+                transition-shadow shadow-sm hover:shadow-md
+              "
+            >
+              Join
+            </button>
+          </form>
+        </div>
+      </div>
     </main>
   );
 }
