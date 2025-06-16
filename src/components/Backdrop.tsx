@@ -2,11 +2,7 @@ export default function Backdrop() {
   return (
     <div className="absolute inset-0 overflow-hidden bg-portage-600 -z-10">
       <header className="absolute left-6 top-6 z-10">
-        <img
-          src="/dsc_white.svg"
-          alt="UW DSC logo"
-          className="h-16 w-auto"
-        />
+        <img src="/dsc_white.svg" alt="UW DSC logo" className="h-16 w-auto" />
       </header>
       <div
         className="
@@ -103,7 +99,7 @@ export default function Backdrop() {
           <circle cx="850" cy="660" r="10" fill="white" />
           <circle cx="1540" cy="315" r="10" fill="white" />
         </svg>
-        
+
         {/** Big dark circle bottom-left **/}
         <div
           className="
@@ -114,7 +110,6 @@ export default function Backdrop() {
           "
         />
       </div>
-
     </div>
   );
 }
