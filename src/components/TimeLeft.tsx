@@ -29,7 +29,7 @@ export default function TimeLeft() {
     <div className="bg-portage-900 rounded-lg p-6">
       <h3 className="text-portage-200 text-lg">Time Left</h3>
       <div className="flex flex-row gap-6">
-        <span className="text-white text-3xl md:text-4xl lg:text-5xl font-bold">
+        <span className="text-white text-xl md:text-2xl lg:text-3xl font-bold">
           {hours}:{minutes.toString().padStart(2, "0")}:
           {seconds.toString().padStart(2, "0")}
         </span>
