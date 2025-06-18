@@ -25,12 +25,14 @@ export async function POST(req: NextRequest) {
 
     // Get team with member count
     const { data: team, error: teamError } = await supabase
-      .from('teams')
-      .select(`
+      .from("teams")
+      .select(
+        `
         *,
         members:users(id)
-      `)
-      .eq('code', teamCode)
+      `
+      )
+      .eq("code", teamCode)
       .single();
 
     if (teamError) {
@@ -47,46 +49,55 @@ export async function POST(req: NextRequest) {
 
     // Check if user exists, create if not
     const { data: existingUser, error: userCheckError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', userEmail)
+      .from("users")
+      .select("*")
+      .eq("email", userEmail)
       .single();
 
     let user;
-    if (userCheckError && userCheckError.code === 'PGRST116') {
+    if (userCheckError && userCheckError.code === "PGRST116") {
       // User doesn't exist, create them
       const { data: newUser, error: createError } = await supabase
-        .from('users')
+        .from("users")
         .insert({
           club_id: "",
           name: data.username,
           email: data.email,
-          team_id: team.id
+          team_id: team.id,
         })
         .select()
         .single();
 
       if (createError) {
-        return NextResponse.json({ error: createError.message }, { status: 500 });
+        return NextResponse.json(
+          { error: createError.message },
+          { status: 500 }
+        );
       }
-      
+
       user = newUser;
     } else if (existingUser) {
       // User exists, update their team
       const { data: updatedUser, error: updateError } = await supabase
-        .from('users')
+        .from("users")
         .update({ team_id: team.id })
-        .eq('email', userEmail)
+        .eq("email", userEmail)
         .select()
         .single();
 
       if (updateError) {
-        return NextResponse.json({ error: updateError.message }, { status: 500 });
+        return NextResponse.json(
+          { error: updateError.message },
+          { status: 500 }
+        );
       }
 
       user = updatedUser;
     } else {
-      return NextResponse.json({ error: userCheckError.message }, { status: 500 });
+      return NextResponse.json(
+        { error: userCheckError ? userCheckError.message : userCheckError },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({

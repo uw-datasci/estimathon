@@ -11,7 +11,8 @@
   --color-foreground: var(--foreground);
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /*--font-body: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;*/
+  --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --color-portage-50: #f1f3fc;
   --color-portage-100: #e5e9fa;
   --color-portage-200: #cfd6f6;
