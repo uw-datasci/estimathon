@@ -5,7 +5,7 @@ export async function GET(
   _req: Request,
   context: { params: { teamId: string } }
 ) {
-  const { teamId } = context.params;
+  const { teamId } = await context.params;
 
   const { count, error } = await supabase
     .from("submissions")
