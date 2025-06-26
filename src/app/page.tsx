@@ -62,6 +62,6 @@ export default async function Home() {
     redirect("/waiting");
   }
 
-  // event is live!
+  // event is live
   redirect("/dashboard");
 }
