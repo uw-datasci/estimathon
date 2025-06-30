@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function GET(
   _req: Request,
@@ -7,7 +7,7 @@ export async function GET(
 ) {
   const { teamId } = await context.params;
 
-  const { data: submissions, error } = await supabase
+  const { data: submissions, error } = await supabaseAdmin
     .from("submissions")
     .select(
       `
