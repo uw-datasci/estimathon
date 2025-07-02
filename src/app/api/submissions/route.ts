@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   const { teamId, questionId, min_value, max_value } = await req.json();
@@ -8,12 +8,13 @@ export async function POST(req: Request) {
   }
 
   // Check submission count
-  const { count, error: countError } = await supabase
+  const { count, error: countError } = await supabaseAdmin 
     .from('submissions')
     .select('*', { count: 'exact', head: true })
     .eq('team_id', teamId);
 
   if (countError) {
+    console.error(countError);
     return NextResponse.json({ error: countError.message }, { status: 500 });
   }
 
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
   }
 
   // Upsert submission
-  const { data: submission, error } = await supabase
+  const { data: submission, error } = await supabaseAdmin
     .from('submissions')
     .upsert(
       { 
@@ -42,6 +43,7 @@ export async function POST(req: Request) {
     .single();
 
   if (error) {
+    console.error(error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

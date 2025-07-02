@@ -13,13 +13,26 @@ import { useScoreInfo } from "@/utils/hooks/useScoreInfo";
 import Modal from "../../components/Modal";
 import { useTimer } from "@/utils/hooks/useTimer";
 import React from "react";
+import { useCurrentTeam } from "@/utils/hooks/useCurrentTeam";
 
-export default function UserQuestions() {
-  const { user } = useUserInfo();
+function calculateScore(submissions: Submission[], goodIntervals: number) {
+  var score = 0;
+  for (const submission of submissions) {
+    if (submission.is_correct) {
+      score += Math.floor(submission.max_value / submission.min_value);
+    }
+  }
+  score += 10;
+  score *= (2 ** (13 - goodIntervals));
+  return score;
+}
+
+export default function UserQuestionsClient() {
+  const { teamId } = useCurrentTeam();
   const { questions } = useQuestions();
-  const { submissions } = useSubmissions(user?.team_id);
+  const { submissions } = useSubmissions(teamId ?? undefined);
   const { remainingGuesses, loading: scoreLoading } = useScoreInfo(
-    user?.team_id
+    teamId ?? undefined
   );
   const [scrollToId, setScrollToId] = useState<string | null>(null);
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -33,8 +46,9 @@ export default function UserQuestions() {
     submissionMap[s.question_id] = { ...s, attempted: true };
   });
 
-  // Score is number of correct submissions
-  const score = submissions.filter((s) => s.is_correct).length;
+  const goodIntervals = submissions.filter((s) => s.is_correct).length;
+  var score = calculateScore(submissions, goodIntervals);
+
   const total = questions.length;
   const maxGuesses = 18;
 
@@ -60,7 +74,7 @@ export default function UserQuestions() {
 
   // Submission handler
   const handleSubmit = async (questionId: string, min: number, max: number) => {
-    if (!user?.team_id) {
+    if (!teamId) {
       console.error("No team ID available");
       return;
     }
@@ -69,7 +83,7 @@ export default function UserQuestions() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        teamId: user.team_id,
+        teamId: teamId,
         questionId,
         min_value: min,
         max_value: max,
@@ -135,6 +149,7 @@ export default function UserQuestions() {
             </div>
             <ScoreInfo
               score={score}
+              correctIntervals={goodIntervals}
               total={total}
               remainingGuesses={remainingGuesses}
               maxGuesses={maxGuesses}
