@@ -56,7 +56,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get('id');
 
-  let query = supabase.from('events').select('*');
+  let query = supabaseAdmin.from('events').select('*');
 
   if (id) {
     query = query.eq('id', id);
@@ -127,13 +127,14 @@ export async function PUT(req: Request) {
     );
   }
 
-  let query = supabaseAdmin.from('events');
+  let query = supabaseAdmin.from('events').select('*');
+  let eventId;
 
   if (id) {
-    query = query.eq('id', id);
+    eventId = id;
   } else {
     // Find the latest event by start_time
-    const { data: latestEvent, error: findError } = await supabase
+    const { data: latestEvent, error: findError } = await supabaseAdmin
       .from('events')
       .select('id')
       .order('start_time', { ascending: false })
@@ -146,12 +147,13 @@ export async function PUT(req: Request) {
         { status: 404 }
       );
     }
-
-    query = query.eq('id', latestEvent.id);
+    eventId = latestEvent.id;
   }
 
-  const { data: event, error } = await query
+  const { data: event, error } = await supabaseAdmin
+    .from('events')
     .update(updateData)
+    .eq('id', eventId)
     .select()
     .single();
 

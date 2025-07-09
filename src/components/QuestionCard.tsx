@@ -65,7 +65,7 @@ export default function QuestionCard({
       onSubmit={handleSubmit}
     >
       <h3 className="text-portage-700 text-lg font-bold">
-        Question {question.id}: {question.content || question.text}
+        {question.text}
       </h3>
       <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center">
         <div className="flex flex-row gap-3 items-center">
