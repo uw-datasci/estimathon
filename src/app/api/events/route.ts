@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   });
 
   const data = await response.json();
-  if (data.role !== "admin") {
+  if (data.role !== "admin" && data.role !== "exec") {
     return NextResponse.json(
       { error: "Forbidden: Admins only" },
       { status: 403 }
@@ -105,7 +105,7 @@ export async function PUT(req: Request) {
   });
 
   const data = await response.json();
-  if (data.role !== "admin") {
+  if (data.role !== "admin"  && data.role !== "exec") {
     return NextResponse.json(
       { error: "Forbidden: Admins only" },
       { status: 403 }
