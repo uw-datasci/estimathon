@@ -130,7 +130,7 @@ export default function OnboardingPage() {
       <Backdrop />
 
       {hasTeam === null && (
-        <div className="absolute top-2/5 left-15">
+        <div className="arelative md:absolute md:top-2/5 md:left-15">
           <p className="text-xl antialiased">Do you have a team?</p>
           <div className="flex gap-4 w-48 pt-3">
             <button
@@ -150,7 +150,7 @@ export default function OnboardingPage() {
       )}
 
       {hasTeam === true && (
-        <div className="absolute top-2/5 left-15">
+        <div className="relative md:absolute md:top-2/5 md:left-15">
           <p className="text-xl antialiased text-left">
             Enter your team’s code:
           </p>
@@ -179,7 +179,7 @@ export default function OnboardingPage() {
       )}
 
       {hasTeam === false && (
-        <div className="absolute top-2/5 left-15">
+        <div className="relative md:absolute md:top-2/5 md:left-15">
           <p className="text-xl antialiased text-left">Your team’s code is:</p>
           <div className="flex items-center gap-3 pt-3">
             <div className="relative w-40">
@@ -220,7 +220,7 @@ export default function OnboardingPage() {
       )}
 
       <h2
-        className="absolute bottom-12 left-15 text-8xl font-helvetica drop-shadow-lg text-white"
+        className="relative md:absolute md:bottom-12 md:left-15 text-4xl md:text-8xl font-helvetica drop-shadow-lg text-white text-center md:text-left"
         style={{
           textShadow: "0 0 12px rgba(255, 255, 255, 0.6)",
         }}

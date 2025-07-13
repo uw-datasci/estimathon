@@ -137,7 +137,7 @@ export default function WaitingPage() {
         <span className="font-bold">{(user?.name)?.split(' ')[0] ?? "player"}</span>?
       </h2>
 
-      <div className="rounded-xl bg-portage-600 px-14 py-12 text-white shadow-lg">
+      <div className="rounded-xl bg-portage-600 px-14 py-12 text-white shadow-lg shadow-portage-600">
         <p className="text-5xl sm:text-6xl font-semibold tabular-nums">
           {clock}
         </p>
@@ -146,7 +146,7 @@ export default function WaitingPage() {
         </p>
       </div>
 
-      <aside className="rounded-xl border border-blue-200/60 bg-white/80 p-6 w-60 backdrop-blur">
+      <aside className="rounded-xl border border-blue-200/60 bg-white/80 p-6 w-60 backdrop-blur shadow-lg shadow-portage-300">
         <h3 className="mb-3 font-semibold text-portage-600">Your team</h3>
         <ul className="space-y-2">
           {members.map((m, i) => (

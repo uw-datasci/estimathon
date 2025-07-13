@@ -47,6 +47,8 @@ export default function AdminDashboard() {
     end_time: ''
   });
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -207,8 +209,9 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
-      <div className="bg-slate-900 p-4 shadow-lg">
-        <div className="flex justify-between items-center">
+      <div className="bg-slate-900 p-4 shadow-lg sticky top-0 z-20">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+
           <div>
             <header className="">
               <img src="/dsc_white.svg" alt="UW DSC logo" className="h-16 w-auto" />
@@ -223,48 +226,65 @@ export default function AdminDashboard() {
               {getEventStatus()}
             </div>
           </div>
+          <button
+            className="md:hidden p-2"
+            onClick={() => setSidebarOpen(o => !o)}
+          >
+            ☰
+          </button>
         </div>
       </div>
 
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         {/* Sidebar */}
-        <div className="w-64 bg-slate-900 min-h-screen p-4">
-          <nav className="space-y-2">
-            <button
-              onClick={() => setActiveTab('questions')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-                activeTab === 'questions' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
-              }`}
-            >
-              <Settings className="w-5 h-5" />
-              <span>Questions</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('teams')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-                activeTab === 'teams' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
-              }`}
-            >
-              <Users className="w-5 h-5" />
-              <span>Teams</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('event')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-                activeTab === 'event' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
-              }`}
-            >
-              <Clock className="w-5 h-5" />
-              <span>Event Control</span>
-            </button>
-          </nav>
+        <div className="w-full md:w-64 bg-slate-900 md:min-h-screen p-4">
+          <div
+            className={`
+              ${sidebarOpen ? "block" : "hidden"}
+              md:block
+              w-full md:w-64
+              bg-slate-900
+              md:min-h-screen
+              p-4
+            `}
+          >
+            <nav className="space-y-2">
+              <button
+                onClick={() => setActiveTab('questions')}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                  activeTab === 'questions' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
+                }`}
+              >
+                <Settings className="w-5 h-5" />
+                <span>Questions</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('teams')}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                  activeTab === 'teams' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                <span>Teams</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('event')}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                  activeTab === 'event' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
+                }`}
+              >
+                <Clock className="w-5 h-5" />
+                <span>Event Control</span>
+              </button>
+            </nav>
+          </div>
         </div>
 
         {/* Main Content */}
         <div className="flex-1 p-6">
           {activeTab === 'questions' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <h2 className="text-3xl font-bold">Questions Management</h2>
                 <div className="text-portage-400">
                   {questions.filter(q => q.released).length} / {questions.length} Released
@@ -393,7 +413,7 @@ export default function AdminDashboard() {
 
           {activeTab === 'teams' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <h2 className="text-3xl font-bold">Teams Overview</h2>
                 <div className="text-portage-400">
                   {teams.length} Teams Registered
@@ -465,7 +485,7 @@ export default function AdminDashboard() {
 
               {currentEvent && (
                 <div className="bg-portage-950 p-6 rounded-lg">
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
                     <h3 className="text-xl font-semibold">Event Details</h3>
                     <button
                       onClick={() => setEditingEvent(!editingEvent)}
