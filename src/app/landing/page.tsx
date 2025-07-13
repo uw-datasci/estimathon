@@ -168,6 +168,12 @@ export default function OnboardingPage() {
             >
               Join
             </button>
+            <button
+              onClick={() => setHasTeam(null)}
+              className="px-6 py-2 bg-white text-[#5D84D4] rounded hover:bg-blue-100"
+            >
+              Back
+            </button>
           </div>
         </div>
       )}
@@ -199,6 +205,12 @@ export default function OnboardingPage() {
               className="px-6 py-2 bg-white text-[#5D84D4] rounded hover:bg-blue-100"
             >
               Join
+            </button>
+            <button
+              onClick={() => setHasTeam(null)}
+              className="px-6 py-2 bg-white text-[#5D84D4] rounded hover:bg-blue-100"
+            >
+              Back
             </button>
           </div>
           {copyStatus && (
