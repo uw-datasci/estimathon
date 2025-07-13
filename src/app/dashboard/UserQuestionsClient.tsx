@@ -123,10 +123,10 @@ export default function UserQuestionsClient() {
             alt="dsclogo"
             width={64}
             height={64}
-            className="h- w-12 md:h-16 md:w-16 lg:h-20 lg:w-20"
+            className="h- w-16 md:h-16 md:w-16 lg:h-20 lg:w-20"
             priority
           />
-          <h1 className="absolute left-1/2 transform -translate-x-1/2 text-portage-700 text-shadow-md text-shadow-portage-300 text-4xl md:text-4xl lg:text-5xl text-center">
+          <h1 className="absolute left-1/2 transform -translate-x-1/2 text-portage-700 text-shadow-md text-shadow-portage-300 text-3xl md:text-4xl lg:text-5xl text-center">
             Estimathon S25
           </h1>
           <div className="w-16"></div>
