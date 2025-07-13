@@ -127,7 +127,7 @@ export default function WaitingPage() {
 
       <h2 className="text-2xl sm:text-3xl font-medium text-portage-600">
         Are you ready,{" "}
-        <span className="font-bold">{user?.name ?? "player"}</span>?
+        <span className="font-bold">{(user?.name)?.split(' ')[0] ?? "player"}</span>?
       </h2>
 
       <div className="rounded-xl bg-portage-600 px-14 py-12 text-white shadow-lg">
