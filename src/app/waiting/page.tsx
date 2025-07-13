@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import { useCurrentTeam } from "@/utils/hooks/useCurrentTeam";
+import { useUserInfo } from "@/utils/hooks/useUserInfo";
 
 interface TeamMember {
   id: string;
@@ -13,12 +14,11 @@ interface TeamMember {
 export default function WaitingPage() {
   const router = useRouter();
 
+  // Getting user info
+  const { user, loading, error } = useUserInfo();
+
   // 1) get teamId
-  const {
-    teamId,
-    isLoading: teamLoading,
-    error: teamError,
-  } = useCurrentTeam();
+  const { teamId, isLoading: teamLoading, error: teamError } = useCurrentTeam();
 
   // 2) fetch members
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -127,7 +127,7 @@ export default function WaitingPage() {
 
       <h2 className="text-2xl sm:text-3xl font-medium text-portage-600">
         Are you ready,{" "}
-        <span className="font-bold">{members[0]?.name ?? "player"}</span>?
+        <span className="font-bold">{user?.name ?? "player"}</span>?
       </h2>
 
       <div className="rounded-xl bg-portage-600 px-14 py-12 text-white shadow-lg">
@@ -143,7 +143,10 @@ export default function WaitingPage() {
         <h3 className="mb-3 font-semibold text-portage-600">Your team</h3>
         <ul className="space-y-2">
           {members.map((m, i) => (
-            <li key={m.id} className="flex items-center gap-3 text-sm text-portage-600">
+            <li
+              key={m.id}
+              className="flex items-center gap-3 text-sm text-portage-600"
+            >
               <span
                 className={clsx(
                   "h-4 w-4 rounded-full",
@@ -155,6 +158,29 @@ export default function WaitingPage() {
           ))}
         </ul>
       </aside>
+
+      <button
+        onClick={async () => {
+          try {
+            const res = await fetch("/api/teams/leave-team", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+            });
+
+            if (!res.ok) {
+              const { error } = await res.json();
+              throw new Error(error || "Failed to leave team");
+            }
+
+            router.push("/landing");
+          } catch (err: any) {
+            alert("Error leaving team: " + err.message);
+          }
+        }}
+        className="px-6 py-2 rounded bg-portage-600 text-white hover:bg-portage-900"
+      >
+        Leave Team
+      </button>
     </main>
   );
 }
