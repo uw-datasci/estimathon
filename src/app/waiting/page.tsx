@@ -25,6 +25,10 @@ export default function WaitingPage() {
   const [membersLoading, setMembersLoading] = useState(true);
   const [membersError, setMembersError] = useState<string | null>(null);
 
+  // 3) fetch event and timer (unchanged)
+  const [eventStartTime, setEventStartTime] = useState<string | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
+
   useEffect(() => {
     // redirect if not in a team
     if (!teamLoading && !teamId) {
@@ -55,9 +59,12 @@ export default function WaitingPage() {
     fetchMembers();
   }, [teamLoading, teamId]);
 
-  // 3) fetch event and timer (unchanged)
-  const [eventStartTime, setEventStartTime] = useState<string | null>(null);
-  const [remaining, setRemaining] = useState<number | null>(null);
+  useEffect(() => {
+    // redirect after event starts
+    if (remaining === 0) {
+      router.push("/dashboard");
+    }
+  }, [remaining]);
 
   useEffect(() => {
     async function fetchEvent() {
