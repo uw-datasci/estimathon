@@ -19,9 +19,6 @@ export default function WaitingPage() {
 
   // 1) get teamId
   const { teamId, isLoading: teamLoading, error: teamError } = useCurrentTeam();
-  const {
-    user
-  } = useUserInfo();
 
   // 2) fetch members
   const [members, setMembers] = useState<TeamMember[]>([]);
