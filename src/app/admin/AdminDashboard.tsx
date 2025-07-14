@@ -48,6 +48,8 @@ export default function AdminDashboard() {
   });
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
+  const [inputPassword, setInputPassword] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -202,6 +204,33 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!unlocked) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white space-y-4">
+        <h2 className="text-2xl font-bold">Admin Access</h2>
+        <input
+          type="password"
+          value={inputPassword}
+          onChange={(e) => setInputPassword(e.target.value)}
+          className="p-3 rounded-lg bg-portage-950 border border-portage-800 focus:outline-none"
+          placeholder="Enter admin password"
+        />
+        <button
+          onClick={() => {
+            if (inputPassword === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
+              setUnlocked(true);
+            } else {
+              alert("Incorrect password");
+            }
+          }}
+          className="px-4 py-2 bg-portage-600 hover:bg-portage-700 rounded-lg font-semibold"
+        >
+          Unlock
+        </button>
       </div>
     );
   }
