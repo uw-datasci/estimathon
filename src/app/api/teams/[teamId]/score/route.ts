@@ -1,11 +1,12 @@
 import { supabaseAdmin } from "@/lib/supabase";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function GET(
-  request: Request,
-  context: { params: { teamId: string } }
+  req: NextRequest,
+  { params }: { params: { teamId: string } }
 ) {
-  const { teamId } = context.params;
+  const { teamId } = await params;
 
   const { data, error } = await supabaseAdmin
     .from("teams")
