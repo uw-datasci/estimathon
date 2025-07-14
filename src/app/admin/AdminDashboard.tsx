@@ -2,31 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { PlusCircle, Users, Clock, Settings, Eye, EyeOff, Edit2, Trash2, Save, X } from 'lucide-react';
-
-interface Question {
-  id: string;
-  text: string;
-  answer: number;
-  released: boolean;
-  created_at: string;
-}
-
-interface Team {
-  id: string;
-  code: string;
-  score: number;
-  members: { name: string; email: string }[];
-  submissions: any[];
-}
-
-interface Event {
-  id: string;
-  name: string;
-  start_time: string;
-  end_time: string;
-  submission_limit: number;
-  created_at: string;
-}
+import { Question, Team, Event } from '@/lib/supabase';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('questions');
@@ -34,7 +10,7 @@ export default function AdminDashboard() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [, setError] = useState('');
 
   const [newQuestion, setNewQuestion] = useState({ text: '', answer: '' });
   const [editingQuestion, setEditingQuestion] = useState<string | null>(null);
@@ -64,7 +40,7 @@ export default function AdminDashboard() {
         fetchCurrentEvent()
       ]);
     } catch (err) {
-      setError('Failed to load data');
+      setError('Failed to load data: ' + err);
     } finally {
       setLoading(false);
     }

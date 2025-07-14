@@ -6,7 +6,6 @@ import QuestionCard from "../../components/QuestionCard";
 import QuestionGrid from "../../components/QuestionGrid";
 import ScoreInfo from "../../components/ScoreInfo";
 import Image from "next/image";
-import { useUserInfo } from "@/utils/hooks/useUserInfo";
 import { useQuestions } from "@/utils/hooks/useQuestions";
 import { useSubmissions, Submission } from "@/utils/hooks/useSubmissions";
 import { useScoreInfo } from "@/utils/hooks/useScoreInfo";
@@ -16,7 +15,7 @@ import React from "react";
 import { useCurrentTeam } from "@/utils/hooks/useCurrentTeam";
 
 function calculateScore(submissions: Submission[], goodIntervals: number) {
-  var score = 0;
+  let score = 0;
   for (const submission of submissions) {
     if (submission.is_correct) {
       score += Math.floor(submission.max_value / submission.min_value);
@@ -47,7 +46,7 @@ export default function UserQuestionsClient() {
   });
 
   const goodIntervals = submissions.filter((s) => s.is_correct).length;
-  var score = calculateScore(submissions, goodIntervals);
+  const score = calculateScore(submissions, goodIntervals);
 
   const total = questions.length;
   const maxGuesses = 18;

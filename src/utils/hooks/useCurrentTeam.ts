@@ -23,6 +23,7 @@ export function useCurrentTeam(): UseCurrentTeamResult {
         }
         const { teamId } = await res.json();
         if (isMounted) setTeamId(teamId);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(err);
         if (isMounted) setError(err.message);

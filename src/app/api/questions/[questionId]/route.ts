@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies, headers } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabase";
 
 export async function PUT(
-  req: Request,
-  context: { params: { questionId: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ questionId: string }> }
 ) {
   const token = (await cookies()).get("token")?.value;
 
@@ -28,7 +28,7 @@ export async function PUT(
     );
   }
 
-  const { questionId } = await context.params;
+  const { questionId } = await params;
   const updateData = await req.json();
 
   // Remove fields that shouldn't be updated
@@ -57,8 +57,8 @@ export async function PUT(
 }
 
 export async function DELETE(
-  req: Request,
-  context: { params: { questionId: string } }
+  req: NextRequest,
+  context: { params: Promise<{ questionId: string }> }
 ) {
   const token = (await cookies()).get("token")?.value;
 

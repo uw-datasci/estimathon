@@ -15,7 +15,7 @@ export default function WaitingPage() {
   const router = useRouter();
 
   // Getting user info
-  const { user, loading, error } = useUserInfo();
+  const { user } = useUserInfo();
 
   // 1) get teamId
   const { teamId, isLoading: teamLoading, error: teamError } = useCurrentTeam();
@@ -48,6 +48,7 @@ export default function WaitingPage() {
         }
         const body = await res.json();
         setMembers(body.members);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(err);
         setMembersError(err.message);
@@ -180,6 +181,7 @@ export default function WaitingPage() {
             }
 
             router.push("/landing");
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (err: any) {
             alert("Error leaving team: " + err.message);
           }

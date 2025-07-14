@@ -1,6 +1,5 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { NextResponse } from "next/server";
 import AdminDashboard from "./AdminDashboard";
 
 export default async function AdminPage() {
@@ -25,6 +24,7 @@ export default async function AdminPage() {
 
     return <AdminDashboard />;
   } catch (error) {
+    console.log(error);
     redirect("/login");
   }
 }
