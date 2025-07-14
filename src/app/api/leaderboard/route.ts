@@ -6,7 +6,7 @@ export async function GET() {
     const { data, error } = await supabaseAdmin
       .from("teams")
       .select("id, code, score, good_interval")
-      .order("score", { ascending: false });
+      .order("score", { ascending: true });
 
     if (error) {
       console.error("Leaderboard fetch error:", error);
