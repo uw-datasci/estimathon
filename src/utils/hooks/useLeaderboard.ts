@@ -5,6 +5,7 @@ export interface LeaderboardEntry {
   code: string;
   score: number;
   good_interval: number;
+  submission_count: number;
   members: { id: string; name: string }[];
 }
 

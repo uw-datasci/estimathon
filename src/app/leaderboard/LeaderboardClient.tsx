@@ -87,13 +87,14 @@ export default function LeaderboardClient() {
           Global Ranking
         </h2>
         <div className="overflow-x-auto">
-          <div className="min-w-[600px] flex flex-col bg-white rounded-lg shadow border border-gray-200 overflow-hidden p-6 pt-4 h-80">
+          <div className="min-w-[700px] flex flex-col bg-white rounded-lg shadow border border-gray-200 overflow-hidden p-6 pt-4 h-80">
             <div className="flex text-portage-600 pb-3">
-              <div className="w-[9%]">Rank</div>
-              <div className="w-[18%]">Team Code</div>
-              <div className="w-[19%]">Score</div>
-              <div className="w-[20%]">Correct</div>
-              <div className="w-[35%]">Team Members</div>
+              <div className="w-[8%]">Rank</div>
+              <div className="w-[16%]">Team Code</div>
+              <div className="w-[16%]">Score</div>
+              <div className="w-[16%]">Correct</div>
+              <div className="w-[16%]">Submissions</div>
+              <div className="w-[28%]">Team Members</div>
             </div>
             <hr className="border-t border-gray-200 pb-3" />
             <div
@@ -111,6 +112,7 @@ export default function LeaderboardClient() {
                       teamCode={entry.code}
                       score={entry.score}
                       good_intervals={entry.good_interval}
+                      submission_count={entry.submission_count}
                       members={entry.members}
                     />
                     <hr className="border-t border-gray-200 pb-3" />

@@ -27,14 +27,16 @@ export default function QuestionCard({
   const [upper, setUpper] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Initialize input fields with previous submission values
+  // Initialize input fields with previous submission values only once
   useEffect(() => {
-    if (submission && !submission.is_correct) {
+    if (submission && !submission.is_correct && !hasInitialized) {
       setLower(submission.min_value.toString());
       setUpper(submission.max_value.toString());
+      setHasInitialized(true);
     }
-  }, [submission]);
+  }, [submission, hasInitialized]);
 
   const borderColor = submission
     ? submission.is_correct
@@ -64,9 +66,7 @@ export default function QuestionCard({
       className={`bg-portage-50 border ${borderColor} rounded-lg p-6 flex flex-col gap-2 shadow-md`}
       onSubmit={handleSubmit}
     >
-      <h3 className="text-portage-700 text-lg font-bold">
-        {question.text}
-      </h3>
+      <h3 className="text-portage-700 text-lg font-bold">{question.text}</h3>
       <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center">
         <div className="flex flex-row gap-3 items-center">
           <label className="text-portage-700">Lower bound:</label>

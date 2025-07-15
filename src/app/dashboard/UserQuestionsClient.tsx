@@ -13,19 +13,8 @@ import Modal from "../../components/Modal";
 import { useTimer } from "@/utils/hooks/useTimer";
 import React from "react";
 import { useCurrentTeam } from "@/utils/hooks/useCurrentTeam";
+import { useTeamScore } from "@/utils/hooks/useTeamScore";
 import { useRouter } from "next/navigation";
-
-function calculateScore(submissions: Submission[], goodIntervals: number) {
-  let score = 0;
-  for (const submission of submissions) {
-    if (submission.is_correct) {
-      score += Math.floor(submission.max_value / submission.min_value);
-    }
-  }
-  score += 10;
-  score *= (2 ** (13 - goodIntervals));
-  return score;
-}
 
 export default function UserQuestionsClient() {
   const router = useRouter();
@@ -35,6 +24,7 @@ export default function UserQuestionsClient() {
   const { remainingGuesses, loading: scoreLoading } = useScoreInfo(
     teamId ?? undefined
   );
+  const { score, goodIntervals } = useTeamScore(teamId);
   const [scrollToId, setScrollToId] = useState<string | null>(null);
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const { timeLeft } = useTimer();
@@ -49,9 +39,6 @@ export default function UserQuestionsClient() {
     submissionMap[s.question_id] = { ...s, attempted: true };
   });
 
-  const goodIntervals = submissions.filter((s) => s.is_correct).length;
-  const score = calculateScore(submissions, goodIntervals);
-
   const total = questions.length;
   const maxGuesses = 18;
 
@@ -63,7 +50,7 @@ export default function UserQuestionsClient() {
       setShowTimeUpModal(true);
       router.push("/leaderboard");
     }
-  }, [timeLeft]);
+  }, [timeLeft, router]);
 
   // Show out of guesses modal when remainingGuesses is 0 and not loading
   React.useEffect(() => {
