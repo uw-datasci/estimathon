@@ -3,7 +3,6 @@
 import React from "react";
 import { useLeaderboard, LeaderboardEntry } from "@/utils/hooks/useLeaderboard";
 import PodiumTeamCard from "../../components/PodiumTeamCard";
-import LeaderboardRow from "../../components/LeaderboardRow";
 
 export default function AdminLeaderboard() {
   const { leaderboard, loading, error } = useLeaderboard();

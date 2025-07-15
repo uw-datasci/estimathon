@@ -21,6 +21,7 @@ export function useLeaderboard() {
         const data = await res.json();
 
         const enriched = await Promise.all(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (data.leaderboard || []).map(async (entry: any) => {
             const memberRes = await fetch(`/api/teams/${entry.id}`);
             const memberData = await memberRes.json();

@@ -1,10 +1,9 @@
 "use client"
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { PlusCircle, Users, Clock, Settings, Eye, EyeOff, Edit2, Trash2, Save, X } from 'lucide-react';
 import { Question, Team, Event } from '@/lib/supabase';
 import PodiumTeamCard from '@/components/PodiumTeamCard';
-import LeaderboardRow from '@/components/LeaderboardRow';
 import { useLeaderboard } from '@/utils/hooks/useLeaderboard';
 import LeaderboardRowAdmin from './LeaderboardRowAdmin';
 

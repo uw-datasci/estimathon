@@ -25,6 +25,7 @@ export function useTeamMembers() {
         }
         const body = await res.json();
         setMembers(body.members || []);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error("Failed to fetch members:", err);
         setError(err.message);
