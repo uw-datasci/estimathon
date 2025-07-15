@@ -13,6 +13,7 @@ import Modal from "../../components/Modal";
 import { useTimer } from "@/utils/hooks/useTimer";
 import React from "react";
 import { useCurrentTeam } from "@/utils/hooks/useCurrentTeam";
+import { useRouter } from "next/navigation";
 
 function calculateScore(submissions: Submission[], goodIntervals: number) {
   let score = 0;
@@ -27,6 +28,7 @@ function calculateScore(submissions: Submission[], goodIntervals: number) {
 }
 
 export default function UserQuestionsClient() {
+  const router = useRouter();
   const { teamId } = useCurrentTeam();
   const { questions } = useQuestions();
   const { submissions } = useSubmissions(teamId ?? undefined);
@@ -59,6 +61,7 @@ export default function UserQuestionsClient() {
       initialTimerRef.current = false;
     } else if (timeLeft === 0) {
       setShowTimeUpModal(true);
+      router.push("/leaderboard");
     }
   }, [timeLeft]);
 

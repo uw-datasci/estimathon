@@ -43,7 +43,7 @@ export default function Leaderboard() {
           Your results
         </h2>
 
-        <div className="flex gap-x-16">
+        <div className="flex flex-col sm:flex-row sm:gap-x-16 gap-y-6">
           <div className="space-y-1">
             <h1 className="text-3xl font-bold text-portage-600">{score}</h1>
             <p className="text-lg text-portage-600">Your score</p>

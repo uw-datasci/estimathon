@@ -12,7 +12,7 @@ export default async function DashboardPage() {
 
   if (error) {
     console.error("Failed to fetch events:", error.message);
-    redirect("/waiting");
+    redirect("/");
   }
 
   if (events && events.length > 0) {
@@ -21,8 +21,11 @@ export default async function DashboardPage() {
     const endTime   = new Date(events[0].end_time);
 
     // not yet started or already ended
-    if (now < startTime || now > endTime) {
+    if (now < startTime) {
       redirect("/waiting");
+    }
+    if (now > endTime) {
+      redirect("/leaderboard");
     }
   }
 
