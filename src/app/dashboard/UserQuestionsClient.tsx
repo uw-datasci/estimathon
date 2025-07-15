@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TimeLeft from "../../components/TimeLeft";
 import QuestionCard from "../../components/QuestionCard";
 import QuestionGrid from "../../components/QuestionGrid";
@@ -37,6 +37,8 @@ export default function UserQuestionsClient() {
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const { timeLeft } = useTimer();
   const [showOutOfGuesses, setShowOutOfGuesses] = useState(false);
+  const [showTimeUpModal, setShowTimeUpModal] = useState(false);
+  const initialTimerRef = useRef(true);
 
   // Map submissions by question id for fast lookup
   const submissionMap: Record<string, Submission & { attempted?: boolean }> =
@@ -51,6 +53,15 @@ export default function UserQuestionsClient() {
   const total = questions.length;
   const maxGuesses = 18;
 
+  // ignore the very first render
+  useEffect(() => {
+    if (initialTimerRef.current) {
+      initialTimerRef.current = false;
+    } else if (timeLeft === 0) {
+      setShowTimeUpModal(true);
+    }
+  }, [timeLeft]);
+
   // Show out of guesses modal when remainingGuesses is 0 and not loading
   React.useEffect(() => {
     if (!scoreLoading && remainingGuesses === 0) {
@@ -59,8 +70,7 @@ export default function UserQuestionsClient() {
   }, [remainingGuesses, scoreLoading]);
 
   // Show time's out modal when timeLeft is 0
-  const isTimeOut = timeLeft === 0;
-  const isModalOpen = isTimeOut || showOutOfGuesses;
+  const isModalOpen = showTimeUpModal || showOutOfGuesses;
 
   // Scroll to question if requested
   if (scrollToId && questionRefs.current[scrollToId]) {
@@ -94,7 +104,7 @@ export default function UserQuestionsClient() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#E1EAF8] via-[#CADAF3] to-[#B3C9EE] relative">
       {/* Modals */}
-      <Modal isOpen={isTimeOut}>
+      <Modal isOpen={showTimeUpModal}>
         <div>
           <h2 className="text-portage-700 text-2xl font-semibold mb-2">
             Time&apos;s out!
