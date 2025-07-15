@@ -1,10 +1,9 @@
 "use client";
 import { useUserInfo } from "@/utils/hooks/useUserInfo";
 import { useCurrentTeam } from "@/utils/hooks/useCurrentTeam";
-import { useSubmissions, Submission } from "@/utils/hooks/useSubmissions";
-import { useTeamMembers } from "@/utils/hooks/useTeamMembers";
+import { useSubmissions } from "@/utils/hooks/useSubmissions";
 import { useTeamScore } from "@/utils/hooks/useTeamScore";
-import { useLeaderboard, LeaderboardEntry } from "@/utils/hooks/useLeaderboard";
+import { useLeaderboard } from "@/utils/hooks/useLeaderboard";
 import PodiumTeamCard from "../../components/PodiumTeamCard";
 import LeaderboardRow from "../../components/LeaderboardRow";
 import React from "react";
@@ -12,9 +11,8 @@ import React from "react";
 export default function Leaderboard() {
   // Getting user info
   const { user } = useUserInfo();
-  const { teamId, teamCode } = useCurrentTeam();
+  const { teamId } = useCurrentTeam();
   const { submissions } = useSubmissions(teamId ?? undefined);
-  const { members } = useTeamMembers();
   const { score, goodIntervals } = useTeamScore(teamId);
   const badIntervals = submissions.length - goodIntervals;
   const { leaderboard } = useLeaderboard();
@@ -65,14 +63,14 @@ export default function Leaderboard() {
         <h2 className="text-2xl sm:text-3xl font-medium text-portage-600">
           Leaderboard
         </h2>
-        <div className="flex justify-left gap-6">
+        <div className="flex overflow-x-auto sm:justify-start gap-6 py-4">
           {leaderboard.slice(0, 3).map((entry, index) => {
             const style = podiumStyles[index] ?? {
               bg: "bg-portage-600",
               text: "text-portage-100",
             };
             return (
-              <div key={entry.id} className="w-80">
+              <div key={entry.id} className="w-64 sm:w-80 flex-shrink-0">
                 <PodiumTeamCard
                   teamCode={entry.code}
                   score={entry.score}
@@ -88,36 +86,38 @@ export default function Leaderboard() {
         <h2 className="text-2xl sm:text-3xl font-medium text-portage-600">
           Global Ranking
         </h2>
-        <div className="flex flex-col bg-white rounded-lg shadow border border-gray-200 overflow-hidden p-6 pt-4 h-80">
-          <div className="flex text-portage-600 pb-3">
-            <div className="w-[9%]">Rank</div>
-            <div className="w-[18%]">Team Code</div>
-            <div className="w-[19%]">Score</div>
-            <div className="w-[20%]">Correct</div>
-            <div className="w-[35%]">Team Members</div>
-          </div>
-          <hr className="border-t border-gray-200 pb-3" />
-          <div
-            className="scrollable-container max-h-[90%] overflow-y-auto"
-            style={{
-              scrollbarWidth: "thin",
-              scrollbarColor: "#C2CCFF #FFFFFF", // thumb color, track color
-            }}
-          >
-            {leaderboard.map((entry, index) => {
-              return (
-                <div key={entry.id} className="w-full">
-                  <LeaderboardRow
-                    rank={index + 1}
-                    teamCode={entry.code}
-                    score={entry.score}
-                    good_intervals={entry.good_interval}
-                    members={entry.members}
-                  />
-                  <hr className="border-t border-gray-200 pb-3" />
-                </div>
-              );
-            })}
+        <div className="overflow-x-auto">
+          <div className="min-w-[600px] flex flex-col bg-white rounded-lg shadow border border-gray-200 overflow-hidden p-6 pt-4 h-80">
+            <div className="flex text-portage-600 pb-3">
+              <div className="w-[9%]">Rank</div>
+              <div className="w-[18%]">Team Code</div>
+              <div className="w-[19%]">Score</div>
+              <div className="w-[20%]">Correct</div>
+              <div className="w-[35%]">Team Members</div>
+            </div>
+            <hr className="border-t border-gray-200 pb-3" />
+            <div
+              className="scrollable-container max-h-[90%] overflow-y-auto"
+              style={{
+                scrollbarWidth: "thin",
+                scrollbarColor: "#C2CCFF #FFFFFF", // thumb color, track color
+              }}
+            >
+              {leaderboard.map((entry, index) => {
+                return (
+                  <div key={entry.id} className="w-full">
+                    <LeaderboardRow
+                      rank={index + 1}
+                      teamCode={entry.code}
+                      score={entry.score}
+                      good_intervals={entry.good_interval}
+                      members={entry.members}
+                    />
+                    <hr className="border-t border-gray-200 pb-3" />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

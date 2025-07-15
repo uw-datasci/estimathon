@@ -1,8 +1,12 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { PlusCircle, Users, Clock, Settings, Eye, EyeOff, Edit2, Trash2, Save, X } from 'lucide-react';
 import { Question, Team, Event } from '@/lib/supabase';
+import PodiumTeamCard from '@/components/PodiumTeamCard';
+import LeaderboardRow from '@/components/LeaderboardRow';
+import { useLeaderboard } from '@/utils/hooks/useLeaderboard';
+import LeaderboardRowAdmin from './LeaderboardRowAdmin';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('questions');
@@ -26,6 +30,14 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [inputPassword, setInputPassword] = useState('');
+
+  const { leaderboard } = useLeaderboard();
+
+  const podiumStyles = [
+    { bg: "bg-portage-600", text: "text-portage-100" },
+    { bg: "bg-portage-400", text: "text-portage-100" },
+    { bg: "bg-portage-200", text: "text-portage-600" },
+  ];
 
   useEffect(() => {
     fetchData();
@@ -280,6 +292,17 @@ export default function AdminDashboard() {
               >
                 <Clock className="w-5 h-5" />
                 <span>Event Control</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('leaderboard')}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                  activeTab === 'leaderboard'
+                    ? 'bg-portage-600 text-white'
+                    : 'text-portage-300 hover:bg-portage-900'
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                <span>Leaderboard</span>
               </button>
             </nav>
           </div>
@@ -564,6 +587,69 @@ export default function AdminDashboard() {
                   )}
                 </div>
               )}
+            </div>
+          )}
+          {activeTab === 'leaderboard' && (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-medium text-portage-100">
+                Leaderboard
+              </h2>
+
+              <div className="flex justify-left gap-6">
+                {leaderboard.slice(0, 3).map((entry, index) => {
+                  const style = podiumStyles[index] ?? {
+                    bg: "bg-portage-600",
+                    text: "text-portage-100",
+                  };
+                  return (
+                    <div key={entry.id} className="w-80">
+                      <PodiumTeamCard
+                        teamCode={entry.code}
+                        score={entry.score}
+                        members={entry.members}
+                        bgColourClass={style.bg}
+                        textColourClass={style.text}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-medium text-gray-100">
+                Global Ranking
+              </h2>
+              <div className="flex flex-col bg-portage-600 rounded-lg shadow border border-portage-800 overflow-hidden p-6 pt-4">
+                <div className="flex font-bold text-gray-100 pb-3">
+                  <div className="w-[9%]">Rank</div>
+                  <div className="w-[18%]">Team Code</div>
+                  <div className="w-[19%]">Score</div>
+                  <div className="w-[20%]">Correct</div>
+                  <div className="w-[35%]">Team Members</div>
+                </div>
+                <hr className="border-t border-portage-800 pb-3" />
+                <div
+                  className="scrollable-container max-h-[90%] overflow-y-auto"
+                  style={{
+                    scrollbarWidth: "thin",
+                    scrollbarColor: "#C2CCFF #FFFFFF", // thumb color, track color
+                  }}
+                >
+                  {leaderboard.map((entry, index) => {
+                    return (
+                      <div key={entry.id} className="w-full">
+                        <LeaderboardRowAdmin
+                          rank={index + 1}
+                          teamCode={entry.code}
+                          score={entry.score}
+                          good_intervals={entry.good_interval}
+                          members={entry.members}
+                        />
+                        <hr className="border-t border-portage-800 pb-3" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
         </div>
