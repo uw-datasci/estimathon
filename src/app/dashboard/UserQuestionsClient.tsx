@@ -1,12 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TimeLeft from "../../components/TimeLeft";
 import QuestionCard from "../../components/QuestionCard";
 import QuestionGrid from "../../components/QuestionGrid";
 import ScoreInfo from "../../components/ScoreInfo";
 import Image from "next/image";
-import { useUserInfo } from "@/utils/hooks/useUserInfo";
 import { useQuestions } from "@/utils/hooks/useQuestions";
 import { useSubmissions, Submission } from "@/utils/hooks/useSubmissions";
 import { useScoreInfo } from "@/utils/hooks/useScoreInfo";
@@ -14,9 +13,10 @@ import Modal from "../../components/Modal";
 import { useTimer } from "@/utils/hooks/useTimer";
 import React from "react";
 import { useCurrentTeam } from "@/utils/hooks/useCurrentTeam";
+import { useRouter } from "next/navigation";
 
 function calculateScore(submissions: Submission[], goodIntervals: number) {
-  var score = 0;
+  let score = 0;
   for (const submission of submissions) {
     if (submission.is_correct) {
       score += Math.floor(submission.max_value / submission.min_value);
@@ -28,6 +28,7 @@ function calculateScore(submissions: Submission[], goodIntervals: number) {
 }
 
 export default function UserQuestionsClient() {
+  const router = useRouter();
   const { teamId } = useCurrentTeam();
   const { questions } = useQuestions();
   const { submissions } = useSubmissions(teamId ?? undefined);
@@ -38,6 +39,8 @@ export default function UserQuestionsClient() {
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const { timeLeft } = useTimer();
   const [showOutOfGuesses, setShowOutOfGuesses] = useState(false);
+  const [showTimeUpModal, setShowTimeUpModal] = useState(false);
+  const initialTimerRef = useRef(true);
 
   // Map submissions by question id for fast lookup
   const submissionMap: Record<string, Submission & { attempted?: boolean }> =
@@ -47,10 +50,20 @@ export default function UserQuestionsClient() {
   });
 
   const goodIntervals = submissions.filter((s) => s.is_correct).length;
-  var score = calculateScore(submissions, goodIntervals);
+  const score = calculateScore(submissions, goodIntervals);
 
   const total = questions.length;
   const maxGuesses = 18;
+
+  // ignore the very first render
+  useEffect(() => {
+    if (initialTimerRef.current) {
+      initialTimerRef.current = false;
+    } else if (timeLeft === 0) {
+      setShowTimeUpModal(true);
+      router.push("/leaderboard");
+    }
+  }, [timeLeft]);
 
   // Show out of guesses modal when remainingGuesses is 0 and not loading
   React.useEffect(() => {
@@ -60,8 +73,7 @@ export default function UserQuestionsClient() {
   }, [remainingGuesses, scoreLoading]);
 
   // Show time's out modal when timeLeft is 0
-  const isTimeOut = timeLeft === 0;
-  const isModalOpen = isTimeOut || showOutOfGuesses;
+  const isModalOpen = showTimeUpModal || showOutOfGuesses;
 
   // Scroll to question if requested
   if (scrollToId && questionRefs.current[scrollToId]) {
@@ -95,7 +107,7 @@ export default function UserQuestionsClient() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#E1EAF8] via-[#CADAF3] to-[#B3C9EE] relative">
       {/* Modals */}
-      <Modal isOpen={isTimeOut}>
+      <Modal isOpen={showTimeUpModal}>
         <div>
           <h2 className="text-portage-700 text-2xl font-semibold mb-2">
             Time&apos;s out!
@@ -123,10 +135,10 @@ export default function UserQuestionsClient() {
             alt="dsclogo"
             width={64}
             height={64}
-            className="h- w-12 md:h-16 md:w-16 lg:h-20 lg:w-20"
+            className="h- w-16 md:h-16 md:w-16 lg:h-20 lg:w-20"
             priority
           />
-          <h1 className="absolute left-1/2 transform -translate-x-1/2 text-portage-700 text-3xl md:text-3xl lg:text-4xl text-center">
+          <h1 className="absolute left-1/2 transform -translate-x-1/2 text-portage-700 text-shadow-md text-shadow-portage-300 text-3xl md:text-4xl lg:text-5xl text-center">
             Estimathon S25
           </h1>
           <div className="w-16"></div>

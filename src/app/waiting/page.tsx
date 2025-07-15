@@ -15,7 +15,7 @@ export default function WaitingPage() {
   const router = useRouter();
 
   // Getting user info
-  const { user, loading, error } = useUserInfo();
+  const { user } = useUserInfo();
 
   // 1) get teamId
   const { teamId, isLoading: teamLoading, error: teamError } = useCurrentTeam();
@@ -24,6 +24,10 @@ export default function WaitingPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [membersLoading, setMembersLoading] = useState(true);
   const [membersError, setMembersError] = useState<string | null>(null);
+
+  // 3) fetch event and timer (unchanged)
+  const [eventStartTime, setEventStartTime] = useState<string | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
 
   useEffect(() => {
     // redirect if not in a team
@@ -44,6 +48,7 @@ export default function WaitingPage() {
         }
         const body = await res.json();
         setMembers(body.members);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(err);
         setMembersError(err.message);
@@ -55,9 +60,12 @@ export default function WaitingPage() {
     fetchMembers();
   }, [teamLoading, teamId]);
 
-  // 3) fetch event and timer (unchanged)
-  const [eventStartTime, setEventStartTime] = useState<string | null>(null);
-  const [remaining, setRemaining] = useState<number | null>(null);
+  useEffect(() => {
+    // redirect after event starts
+    if (remaining === 0) {
+      router.push("/dashboard");
+    }
+  }, [remaining]);
 
   useEffect(() => {
     async function fetchEvent() {
@@ -130,7 +138,7 @@ export default function WaitingPage() {
         <span className="font-bold">{(user?.name)?.split(' ')[0] ?? "player"}</span>?
       </h2>
 
-      <div className="rounded-xl bg-portage-600 px-14 py-12 text-white shadow-lg">
+      <div className="rounded-xl bg-portage-600 px-14 py-12 text-white shadow-lg shadow-portage-600">
         <p className="text-5xl sm:text-6xl font-semibold tabular-nums">
           {clock}
         </p>
@@ -139,7 +147,7 @@ export default function WaitingPage() {
         </p>
       </div>
 
-      <aside className="rounded-xl border border-blue-200/60 bg-white/80 p-6 w-60 backdrop-blur">
+      <aside className="rounded-xl border border-blue-200/60 bg-white/80 p-6 w-60 backdrop-blur shadow-lg shadow-portage-300">
         <h3 className="mb-3 font-semibold text-portage-600">Your team</h3>
         <ul className="space-y-2">
           {members.map((m, i) => (
@@ -173,6 +181,7 @@ export default function WaitingPage() {
             }
 
             router.push("/landing");
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (err: any) {
             alert("Error leaving team: " + err.message);
           }

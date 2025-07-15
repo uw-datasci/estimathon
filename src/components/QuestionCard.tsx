@@ -42,7 +42,7 @@ export default function QuestionCard({
       : "border-red-400"
     : "border-portage-200";
 
-  const isDisabled = submission?.is_correct || loading || disabled;
+  const isDisabled = loading || disabled;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

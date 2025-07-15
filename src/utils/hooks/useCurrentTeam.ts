@@ -28,6 +28,7 @@ export function useCurrentTeam(): UseCurrentTeamResult {
           setTeamId(teamId);
           setTeamCode(teamCode);
         }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(err);
         if (isMounted) setError(err.message);

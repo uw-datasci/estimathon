@@ -2,31 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { PlusCircle, Users, Clock, Settings, Eye, EyeOff, Edit2, Trash2, Save, X } from 'lucide-react';
-
-interface Question {
-  id: string;
-  text: string;
-  answer: number;
-  released: boolean;
-  created_at: string;
-}
-
-interface Team {
-  id: string;
-  code: string;
-  score: number;
-  members: { name: string; email: string }[];
-  submissions: any[];
-}
-
-interface Event {
-  id: string;
-  name: string;
-  start_time: string;
-  end_time: string;
-  submission_limit: number;
-  created_at: string;
-}
+import { Question, Team, Event } from '@/lib/supabase';
+import PodiumTeamCard from '@/components/PodiumTeamCard';
+import { useLeaderboard } from '@/utils/hooks/useLeaderboard';
+import LeaderboardRowAdmin from './LeaderboardRowAdmin';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('questions');
@@ -34,7 +13,7 @@ export default function AdminDashboard() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [, setError] = useState('');
 
   const [newQuestion, setNewQuestion] = useState({ text: '', answer: '' });
   const [editingQuestion, setEditingQuestion] = useState<string | null>(null);
@@ -46,6 +25,18 @@ export default function AdminDashboard() {
     start_time: '',
     end_time: ''
   });
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
+  const [inputPassword, setInputPassword] = useState('');
+
+  const { leaderboard } = useLeaderboard();
+
+  const podiumStyles = [
+    { bg: "bg-portage-600", text: "text-portage-100" },
+    { bg: "bg-portage-400", text: "text-portage-100" },
+    { bg: "bg-portage-200", text: "text-portage-600" },
+  ];
 
   useEffect(() => {
     fetchData();
@@ -60,7 +51,7 @@ export default function AdminDashboard() {
         fetchCurrentEvent()
       ]);
     } catch (err) {
-      setError('Failed to load data');
+      setError('Failed to load data: ' + err);
     } finally {
       setLoading(false);
     }
@@ -204,11 +195,39 @@ export default function AdminDashboard() {
     );
   }
 
+  if (!unlocked) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white space-y-4">
+        <h2 className="text-2xl font-bold">Admin Access</h2>
+        <input
+          type="password"
+          value={inputPassword}
+          onChange={(e) => setInputPassword(e.target.value)}
+          className="p-3 rounded-lg bg-portage-950 border border-portage-800 focus:outline-none"
+          placeholder="Enter admin password"
+        />
+        <button
+          onClick={() => {
+            if (inputPassword === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
+              setUnlocked(true);
+            } else {
+              alert("Incorrect password");
+            }
+          }}
+          className="px-4 py-2 bg-portage-600 hover:bg-portage-700 rounded-lg font-semibold"
+        >
+          Unlock
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
-      <div className="bg-slate-900 p-4 shadow-lg">
-        <div className="flex justify-between items-center">
+      <div className="bg-slate-900 p-4 shadow-lg sticky top-0 z-20">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+
           <div>
             <header className="">
               <img src="/dsc_white.svg" alt="UW DSC logo" className="h-16 w-auto" />
@@ -223,48 +242,76 @@ export default function AdminDashboard() {
               {getEventStatus()}
             </div>
           </div>
+          <button
+            className="md:hidden p-2"
+            onClick={() => setSidebarOpen(o => !o)}
+          >
+            ☰
+          </button>
         </div>
       </div>
 
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         {/* Sidebar */}
-        <div className="w-64 bg-slate-900 min-h-screen p-4">
-          <nav className="space-y-2">
-            <button
-              onClick={() => setActiveTab('questions')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-                activeTab === 'questions' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
-              }`}
-            >
-              <Settings className="w-5 h-5" />
-              <span>Questions</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('teams')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-                activeTab === 'teams' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
-              }`}
-            >
-              <Users className="w-5 h-5" />
-              <span>Teams</span>
-            </button>
-            <button
-              onClick={() => setActiveTab('event')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-                activeTab === 'event' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
-              }`}
-            >
-              <Clock className="w-5 h-5" />
-              <span>Event Control</span>
-            </button>
-          </nav>
+        <div className="w-full md:w-64 bg-slate-900 md:min-h-screen p-4">
+          <div
+            className={`
+              ${sidebarOpen ? "block" : "hidden"}
+              md:block
+              w-full md:w-64
+              bg-slate-900
+              md:min-h-screen
+              p-4
+            `}
+          >
+            <nav className="space-y-2">
+              <button
+                onClick={() => setActiveTab('questions')}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                  activeTab === 'questions' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
+                }`}
+              >
+                <Settings className="w-5 h-5" />
+                <span>Questions</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('teams')}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                  activeTab === 'teams' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                <span>Teams</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('event')}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                  activeTab === 'event' ? 'bg-portage-600 text-white' : 'text-portage-300 hover:bg-portage-900'
+                }`}
+              >
+                <Clock className="w-5 h-5" />
+                <span>Event Control</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('leaderboard')}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                  activeTab === 'leaderboard'
+                    ? 'bg-portage-600 text-white'
+                    : 'text-portage-300 hover:bg-portage-900'
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                <span>Leaderboard</span>
+              </button>
+            </nav>
+          </div>
         </div>
 
         {/* Main Content */}
         <div className="flex-1 p-6">
           {activeTab === 'questions' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <h2 className="text-3xl font-bold">Questions Management</h2>
                 <div className="text-portage-400">
                   {questions.filter(q => q.released).length} / {questions.length} Released
@@ -393,7 +440,7 @@ export default function AdminDashboard() {
 
           {activeTab === 'teams' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                 <h2 className="text-3xl font-bold">Teams Overview</h2>
                 <div className="text-portage-400">
                   {teams.length} Teams Registered
@@ -465,7 +512,7 @@ export default function AdminDashboard() {
 
               {currentEvent && (
                 <div className="bg-portage-950 p-6 rounded-lg">
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
                     <h3 className="text-xl font-semibold">Event Details</h3>
                     <button
                       onClick={() => setEditingEvent(!editingEvent)}
@@ -539,6 +586,69 @@ export default function AdminDashboard() {
                   )}
                 </div>
               )}
+            </div>
+          )}
+          {activeTab === 'leaderboard' && (
+            <div className="space-y-6">
+              <h2 className="text-3xl font-medium text-portage-100">
+                Leaderboard
+              </h2>
+
+              <div className="flex justify-left gap-6">
+                {leaderboard.slice(0, 3).map((entry, index) => {
+                  const style = podiumStyles[index] ?? {
+                    bg: "bg-portage-600",
+                    text: "text-portage-100",
+                  };
+                  return (
+                    <div key={entry.id} className="w-80">
+                      <PodiumTeamCard
+                        teamCode={entry.code}
+                        score={entry.score}
+                        members={entry.members}
+                        bgColourClass={style.bg}
+                        textColourClass={style.text}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-medium text-gray-100">
+                Global Ranking
+              </h2>
+              <div className="flex flex-col bg-portage-600 rounded-lg shadow border border-portage-800 overflow-hidden p-6 pt-4">
+                <div className="flex font-bold text-gray-100 pb-3">
+                  <div className="w-[9%]">Rank</div>
+                  <div className="w-[18%]">Team Code</div>
+                  <div className="w-[19%]">Score</div>
+                  <div className="w-[20%]">Correct</div>
+                  <div className="w-[35%]">Team Members</div>
+                </div>
+                <hr className="border-t border-portage-800 pb-3" />
+                <div
+                  className="scrollable-container max-h-[90%] overflow-y-auto"
+                  style={{
+                    scrollbarWidth: "thin",
+                    scrollbarColor: "#C2CCFF #FFFFFF", // thumb color, track color
+                  }}
+                >
+                  {leaderboard.map((entry, index) => {
+                    return (
+                      <div key={entry.id} className="w-full">
+                        <LeaderboardRowAdmin
+                          rank={index + 1}
+                          teamCode={entry.code}
+                          score={entry.score}
+                          good_intervals={entry.good_interval}
+                          members={entry.members}
+                        />
+                        <hr className="border-t border-portage-800 pb-3" />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
         </div>

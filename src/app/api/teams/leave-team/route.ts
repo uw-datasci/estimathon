@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import { supabase } from "@/lib/supabase";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function POST(req: NextRequest) {
   const token = (await cookies()).get("token")?.value;
 

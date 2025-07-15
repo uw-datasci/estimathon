@@ -45,6 +45,7 @@ export async function GET() {
       teamId: userRow.team_id,
       teamCode: teamRow.code,
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Error fetching current team:", err);
     return NextResponse.json(

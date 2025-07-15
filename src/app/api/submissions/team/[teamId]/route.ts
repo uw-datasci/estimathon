@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 export async function GET(
   _req: Request,
-  context: { params: { teamId: string } }
+  context: { params: Promise<{ teamId: string }> }
 ) {
   const { teamId } = await context.params;
 

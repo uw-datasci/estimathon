@@ -22,6 +22,7 @@ export default async function Home() {
       }
     );
     userEmail = data.email;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
     // if the token is invalid / expired
     redirect("/login");
@@ -38,7 +39,6 @@ export default async function Home() {
   if (userError || !userRow?.team_id) {
     redirect("/landing");
   }
-  const teamId = userRow.team_id;
 
   // 4) fetch the latest event
   const { data: events, error: eventError } = await supabaseAdmin

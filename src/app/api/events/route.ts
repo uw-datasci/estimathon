@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies, headers } from "next/headers";
-import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   const token = (await cookies()).get("token")?.value;
@@ -127,7 +127,6 @@ export async function PUT(req: Request) {
     );
   }
 
-  let query = supabaseAdmin.from('events').select('*');
   let eventId;
 
   if (id) {

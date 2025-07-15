@@ -1,7 +1,7 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import { supabase } from "@/lib/supabase";
+import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
   const { teamCode } = await req.json();
