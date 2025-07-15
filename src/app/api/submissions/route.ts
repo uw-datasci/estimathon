@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase, supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 import { calculateTeamScore } from "@/utils/scoring";
 
 export async function POST(req: Request) {
@@ -8,18 +8,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
 
-  // Check submission count
-  const { count, error: countError } = await supabaseAdmin
-    .from("submissions")
-    .select("*", { count: "exact", head: true })
-    .eq("team_id", teamId);
+  // Check submission count using teams table
+  const { data: teamData, error: countError } = await supabaseAdmin
+    .from("teams")
+    .select("submission_count")
+    .eq("id", teamId)
+    .single();
 
   if (countError) {
     console.error(countError);
     return NextResponse.json({ error: countError.message }, { status: 500 });
   }
 
-  if (count && count >= 18) {
+  const currentSubmissionCount = teamData?.submission_count || 0;
+  if (currentSubmissionCount >= 18) {
     return NextResponse.json(
       { error: "Submission limit reached" },
       { status: 403 }
@@ -50,7 +52,7 @@ export async function POST(req: Request) {
 
   // Recalculate team score after successful submission
   try {
-    // Get all team submissions
+    // Get all team submissions for score calculation
     const { data: allSubmissions } = await supabaseAdmin
       .from("submissions")
       .select("*")
@@ -67,12 +69,13 @@ export async function POST(req: Request) {
         questions
       );
 
-      // Update team score
+      // Increment submission count by 1 for each submission attempt
       await supabaseAdmin
         .from("teams")
         .update({
           score,
           good_interval: goodIntervals,
+          submission_count: currentSubmissionCount + 1,
         })
         .eq("id", teamId);
     }

@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const { data, error } = await supabaseAdmin
       .from("teams")
-      .select("id, code, score, good_interval")
+      .select("id, code, score, good_interval, submission_count")
       .order("score", { ascending: true });
 
     if (error) {
@@ -14,7 +14,7 @@ export async function GET() {
     }
 
     return NextResponse.json({ leaderboard: data });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error("Unexpected leaderboard error:", err);
     return NextResponse.json(

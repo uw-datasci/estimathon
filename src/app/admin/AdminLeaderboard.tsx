@@ -8,7 +8,7 @@ export default function AdminLeaderboard() {
   const { leaderboard, loading, error } = useLeaderboard();
 
   if (loading) return <div>Loading leaderboard…</div>;
-  if (error)  return <div className="text-red-400">Error: {error}</div>;
+  if (error) return <div className="text-red-400">Error: {error}</div>;
 
   const podiumStyles = [
     { bg: "bg-portage-600", text: "text-portage-100" },
@@ -45,16 +45,21 @@ export default function AdminLeaderboard() {
               <th className="px-4 py-2 text-left">Team Code</th>
               <th className="px-4 py-2 text-left">Score</th>
               <th className="px-4 py-2 text-left">Correct</th>
+              <th className="px-4 py-2 text-left">Submissions</th>
               <th className="px-4 py-2 text-left">Members</th>
             </tr>
           </thead>
           <tbody>
             {leaderboard.map((entry: LeaderboardEntry, idx: number) => (
-              <tr key={entry.id} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+              <tr
+                key={entry.id}
+                className={idx % 2 === 0 ? "bg-white" : "bg-gray-50"}
+              >
                 <td className="px-4 py-2">{idx + 1}</td>
                 <td className="px-4 py-2">{entry.code}</td>
                 <td className="px-4 py-2">{entry.score}</td>
                 <td className="px-4 py-2">{entry.good_interval}</td>
+                <td className="px-4 py-2">{entry.submission_count}</td>
                 <td className="px-4 py-2">
                   {entry.members.map((m) => m.name).join(", ")}
                 </td>

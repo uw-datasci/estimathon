@@ -5,6 +5,7 @@ interface LeaderboardRowProps {
   teamCode: string;
   score: number;
   good_intervals: number;
+  submission_count: number;
   members: TeamMember[];
 }
 
@@ -13,6 +14,7 @@ export default function LeaderboardRow({
   teamCode,
   score,
   good_intervals,
+  submission_count,
   members,
 }: LeaderboardRowProps) {
   // Split members into two rows if more than 4
@@ -25,11 +27,12 @@ export default function LeaderboardRow({
 
   return (
     <div className="flex items-start text-portage-200 pb-4">
-      <div className="w-[10%]">{rank}</div>
-      <div className="w-[18%]">{teamCode}</div>
-      <div className="w-[20%]">{score}</div>
-      <div className="w-[20%]">{good_intervals}</div>
-      <div className="flex flex-col gap-1 w-[35%]">
+      <div className="w-[8%]">{rank}</div>
+      <div className="w-[16%]">{teamCode}</div>
+      <div className="w-[16%]">{score}</div>
+      <div className="w-[16%]">{good_intervals}</div>
+      <div className="w-[16%]">{submission_count}</div>
+      <div className="flex flex-col gap-1 w-[28%]">
         {splitMembers.map((row, rowIdx) => (
           <div key={rowIdx} className="flex gap-4">
             {row.map((member) => (
