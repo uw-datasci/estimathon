@@ -62,10 +62,10 @@ export default function WaitingPage() {
 
   useEffect(() => {
     // redirect after event starts
-    if (remaining === 0) {
+    if (remaining === 0 && !teamLoading && teamId) {
       router.push("/dashboard");
     }
-  }, [remaining]);
+  }, [remaining, router, teamLoading, teamId]);
 
   useEffect(() => {
     async function fetchEvent() {
