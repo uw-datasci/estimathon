@@ -29,8 +29,22 @@ export async function GET() {
       .eq("email", userEmail)
       .single();
 
-    if (error) throw error;
+    if (error || !userRow?.team_id) throw error;
 
+    // 4) Lookup team code in Supabase
+    const { data: teamRow, error: teamError } = await supabaseAdmin
+      .from("teams")
+      .select("code")
+      .eq("id", userRow.team_id)
+      .single();
+
+    if (teamError) throw teamError;
+
+    // 5) Return { teamId: string, teamCode: string|null }
+    return NextResponse.json({
+      teamId: userRow.team_id,
+      teamCode: teamRow.code,
+    });
     // 4) Return { teamId: string|null }
     return NextResponse.json({ teamId: userRow.team_id });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
