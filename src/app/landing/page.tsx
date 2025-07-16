@@ -132,7 +132,7 @@ export default function OnboardingPage() {
       <Backdrop />
 
       {hasTeam === null && (
-        <div className="arelative md:absolute md:top-2/5 md:left-15">
+        <div className="relative md:absolute md:top-2/5 md:left-15 text-white">
           <p className="text-xl antialiased">Do you have a team?</p>
           <div className="flex gap-4 w-48 pt-3">
             <button
