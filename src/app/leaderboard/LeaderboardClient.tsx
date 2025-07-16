@@ -1,7 +1,6 @@
 "use client";
 import { useUserInfo } from "@/utils/hooks/useUserInfo";
 import { useCurrentTeam } from "@/utils/hooks/useCurrentTeam";
-import { useSubmissions } from "@/utils/hooks/useSubmissions";
 import { useTeamScore } from "@/utils/hooks/useTeamScore";
 import { useLeaderboard } from "@/utils/hooks/useLeaderboard";
 import PodiumTeamCard from "../../components/PodiumTeamCard";
@@ -12,7 +11,6 @@ export default function LeaderboardClient() {
   // Getting user info
   const { user } = useUserInfo();
   const { teamId } = useCurrentTeam();
-  const { submissions } = useSubmissions(teamId ?? undefined);
   const { score, goodIntervals } = useTeamScore(teamId);
   const badIntervals = 13 - goodIntervals;
   const { leaderboard } = useLeaderboard();
