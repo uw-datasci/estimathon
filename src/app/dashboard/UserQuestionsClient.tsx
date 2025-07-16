@@ -46,11 +46,11 @@ export default function UserQuestionsClient() {
   useEffect(() => {
     if (initialTimerRef.current) {
       initialTimerRef.current = false;
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && !scoreLoading) {
       setShowTimeUpModal(true);
       router.push("/leaderboard");
     }
-  }, [timeLeft, router]);
+  }, [timeLeft, router, scoreLoading]);
 
   // Show out of guesses modal when remainingGuesses is 0 and not loading
   React.useEffect(() => {
