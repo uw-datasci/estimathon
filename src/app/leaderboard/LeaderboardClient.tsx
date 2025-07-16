@@ -14,7 +14,7 @@ export default function LeaderboardClient() {
   const { teamId } = useCurrentTeam();
   const { submissions } = useSubmissions(teamId ?? undefined);
   const { score, goodIntervals } = useTeamScore(teamId);
-  const badIntervals = submissions.length - goodIntervals;
+  const badIntervals = 13 - goodIntervals;
   const { leaderboard } = useLeaderboard();
 
   const podiumStyles = [
