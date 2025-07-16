@@ -13,17 +13,17 @@
   --font-mono: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   /*--font-body: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;*/
   --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --color-portage-50: #f1f3fc;
-  --color-portage-100: #e5e9fa;
-  --color-portage-200: #cfd6f6;
-  --color-portage-300: #b2bbef;
-  --color-portage-400: #989de7;
-  --color-portage-500: #7a79db;
-  --color-portage-600: #675ecd;
-  --color-portage-700: #594eb4;
-  --color-portage-800: #484291;
-  --color-portage-900: #3f3b74;
-  --color-portage-950: #252244;
+  --color-portage-50: #F2F6FC;
+  --color-portage-100: #E1EAF8;
+  --color-portage-200: #CADAF3;
+  --color-portage-300: #A6C3EA;
+  --color-portage-400: #7CA3DE;
+  --color-portage-500: #5D84D4;
+  --color-portage-600: #496AC7;
+  --color-portage-700: #405ABA;
+  --color-portage-800: #384995;
+  --color-portage-900: #314077;
+  --color-portage-950: #222949;
 }
 
 @media (prefers-color-scheme: dark) {
