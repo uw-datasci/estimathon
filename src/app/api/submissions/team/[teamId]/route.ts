@@ -7,14 +7,16 @@ export async function GET(
 ) {
   const { teamId } = await context.params;
 
-  const { count, error } = await supabaseAdmin 
-    .from("submissions")
-    .select("*", { count: "exact", head: true })
-    .eq("team_id", teamId);
+  const { data, error } = await supabaseAdmin
+    .from("teams")
+    .select("submission_count")
+    .eq("id", teamId)
+    .single();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ remaining: 18 - (count || 0) });
+  const submissionCount = data.submission_count || 0;
+  return NextResponse.json({ remaining: 18 - submissionCount });
 }
