@@ -18,7 +18,12 @@ export default function WaitingPage() {
   const { user } = useUserInfo();
 
   // 1) get teamId
-  const { teamId, isLoading: teamLoading, error: teamError } = useCurrentTeam();
+  const {
+    teamCode,
+    teamId,
+    isLoading: teamLoading,
+    error: teamError,
+  } = useCurrentTeam();
 
   // 2) fetch members
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -48,7 +53,7 @@ export default function WaitingPage() {
         }
         const body = await res.json();
         setMembers(body.members);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(err);
         setMembersError(err.message);
@@ -135,7 +140,10 @@ export default function WaitingPage() {
 
       <h2 className="text-2xl sm:text-3xl font-medium text-portage-600">
         Are you ready,{" "}
-        <span className="font-bold">{(user?.name)?.split(' ')[0] ?? "player"}</span>?
+        <span className="font-bold">
+          {user?.name?.split(" ")[0] ?? "player"}
+        </span>
+        ?
       </h2>
 
       <div className="rounded-xl bg-portage-600 px-14 py-12 text-white shadow-lg shadow-portage-600">
@@ -148,7 +156,9 @@ export default function WaitingPage() {
       </div>
 
       <aside className="rounded-xl border border-blue-200/60 bg-white/80 p-6 w-60 backdrop-blur shadow-lg shadow-portage-300">
-        <h3 className="mb-3 font-semibold text-portage-600">Your team</h3>
+        <h3 className="mb-3 font-semibold text-portage-600">
+          Your team: {teamCode}
+        </h3>
         <ul className="space-y-2">
           {members.map((m, i) => (
             <li
@@ -181,7 +191,7 @@ export default function WaitingPage() {
             }
 
             router.push("/landing");
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (err: any) {
             alert("Error leaving team: " + err.message);
           }

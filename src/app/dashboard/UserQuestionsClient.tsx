@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 
 export default function UserQuestionsClient() {
   const router = useRouter();
-  const { teamId } = useCurrentTeam();
+  const { teamId, teamCode } = useCurrentTeam();
   const { questions } = useQuestions();
   const { submissions } = useSubmissions(teamId ?? undefined);
   const { remainingGuesses, loading: scoreLoading } = useScoreInfo(
@@ -129,6 +129,9 @@ export default function UserQuestionsClient() {
             Estimathon S25
           </h1>
           <div className="w-16"></div>
+          <h4 className="text-portage-700 font-semibold mb-2 text-xl">
+            Team Code: {teamCode ? teamCode : "Not in a team"}
+          </h4>
         </header>
         <main className="min-h-screen flex flex-col md:flex-row">
           {/* Sidebar */}
