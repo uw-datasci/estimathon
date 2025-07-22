@@ -116,21 +116,35 @@ export default function UserQuestionsClient() {
       <div
         className={isModalOpen ? "pointer-events-none blur-sm select-none" : ""}
       >
-        <header className="flex flex-row items-center justify-between p-4 md-6 lg:p-8 relative">
+        <header className="
+          relative
+          flex flex-row items-start p-4 justify-between md:items-center md:p-8
+        ">
           <Image
             src="/dsc.svg"
             alt="dsclogo"
             width={64}
             height={64}
-            className="h- w-16 md:h-16 md:w-16 lg:h-20 lg:w-20"
+            className="h-16 w-16 md:h-16 md:w-16 lg:h-20 lg:w-20"
             priority
           />
-          <h1 className="absolute left-1/2 transform -translate-x-1/2 text-portage-700 text-shadow-md text-shadow-portage-300 text-3xl md:text-4xl lg:text-5xl text-center">
+          {/* mobile */}
+          <div className="mt-2 mr-15 flex flex-col items-center md:hidden">
+            <h1 className="text-portage-700 text-shadow-md text-3xl">
+              Estimathon S25
+            </h1>
+            <h4 className="text-portage-700 font-semibold text-xl">
+              Team Code: {teamCode ?? "Not in a team"}
+            </h4>
+          </div>
+          {/* desktop */}
+          <h1 className="hidden md:block absolute left-1/2 transform -translate-x-1/2
+                        text-portage-700 text-shadow-md text-4xl lg:text-5xl">
             Estimathon S25
           </h1>
-          <div className="w-16"></div>
-          <h4 className="text-portage-700 font-semibold mb-2 text-xl">
-            Team Code: {teamCode ? teamCode : "Not in a team"}
+          <div className="hidden md:block w-16" />
+          <h4 className="hidden md:block text-portage-700 font-semibold text-xl">
+            Team Code: {teamCode ?? "Not in a team"}
           </h4>
         </header>
         <main className="min-h-screen flex flex-col md:flex-row">
