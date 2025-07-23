@@ -204,7 +204,7 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-portage-950 flex items-center justify-center">
         <div className="text-white text-xl">Loading...</div>
       </div>
     );
@@ -212,7 +212,7 @@ export default function AdminDashboard() {
 
   if (!unlocked) {
     return (
-      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center text-white space-y-4">
+      <div className="min-h-screen bg-portage-950 flex flex-col items-center justify-center text-white space-y-4">
         <h2 className="text-2xl font-bold">Admin Access</h2>
         <input
           type="password"
@@ -238,9 +238,9 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
+    <div className="min-h-screen bg-portage-950 text-white">
       {/* Header */}
-      <div className="bg-slate-900 p-4 shadow-lg sticky top-0 z-20">
+      <div className="bg-portage-950 p-4 shadow-lg sticky top-0 z-20">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
             <header className="">
@@ -276,13 +276,13 @@ export default function AdminDashboard() {
 
       <div className="flex flex-col md:flex-row">
         {/* Sidebar */}
-        <div className="w-full md:w-64 bg-slate-900 md:min-h-screen p-4">
+        <div className="w-full md:w-64 bg-portage-950 md:min-h-screen p-4">
           <div
             className={`
               ${sidebarOpen ? "block" : "hidden"}
               md:block
               w-full md:w-64
-              bg-slate-900
+              bg-portage-950
               md:min-h-screen
               p-4
             `}
