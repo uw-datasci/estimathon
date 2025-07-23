@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import LeaderboardClient from "./LeaderboardClient";
