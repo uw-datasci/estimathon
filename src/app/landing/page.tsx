@@ -113,7 +113,7 @@ export default function OnboardingPage() {
       console.log("User joined team:", joinData);
 
       // Redirect
-      router.push("/dashboard"); // or whatever page the dash is on
+      router.push("/waiting"); // or whatever page the dash is on
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert("Error: " + err.message);
