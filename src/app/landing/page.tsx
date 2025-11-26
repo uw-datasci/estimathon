@@ -82,7 +82,7 @@ export default function OnboardingPage() {
       if (!res.ok) throw new Error(data.error || "Failed to join team");
       console.log("Joined team successfully:", data);
       router.push("/dashboard");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert("Error: " + err.message);
     }
@@ -114,7 +114,7 @@ export default function OnboardingPage() {
 
       // Redirect
       router.push("/dashboard"); // or whatever page the dash is on
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       alert("Error: " + err.message);
     }
@@ -227,7 +227,7 @@ export default function OnboardingPage() {
           textShadow: "0 0 12px rgba(255, 255, 255, 0.6)",
         }}
       >
-        Estimathon S25
+        Estimathon {process.env.NEXT_PUBLIC_TERM}
       </h2>
     </main>
   );
