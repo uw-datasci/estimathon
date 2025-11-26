@@ -1,9 +1,9 @@
-
-Repo for UW Data Science Club's Estimathon (S25)
+Repo for UW Data Science Club's Estimathon
 
 ## Local Development
 
 First time:
+
 ```bash
 npm install
 

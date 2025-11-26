@@ -28,7 +28,7 @@ export default function LoginPage({ returnTo }: { returnTo: string }) {
         })
       );
       router.replace(returnTo);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       setError("Invalid email or password: " + e);
     }
@@ -37,14 +37,10 @@ export default function LoginPage({ returnTo }: { returnTo: string }) {
   return (
     <main className="relative min-h-screen overflow-hidden">
       <header className="absolute left-6 top-6 z-10">
-        <img
-          src="/dsc_white.svg"
-          alt="UW DSC logo"
-          className="h-16 w-auto"
-        />
+        <img src="/dsc_white.svg" alt="UW DSC logo" className="h-16 w-auto" />
       </header>
       <div
-      className="
+        className="
         absolute inset-0
         bg-black/40
       "
@@ -53,7 +49,9 @@ export default function LoginPage({ returnTo }: { returnTo: string }) {
 
       {/* top-left header */}
       <div className="absolute left-6 top-30 z-10 text-white">
-        <h2 className="text-xl sm:text-3xl font-light">Estimathon S25</h2>
+        <h2 className="text-xl sm:text-3xl font-light">
+          Estimathon {process.env.NEXT_PUBLIC_TERM}
+        </h2>
       </div>
 
       {/* center card */}
@@ -81,9 +79,7 @@ export default function LoginPage({ returnTo }: { returnTo: string }) {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            {error && (
-              <p className="text-red-400 text-sm mt-1">{error}</p>
-            )}
+            {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
 
             <button
               type="submit"
