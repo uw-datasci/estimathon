@@ -22,9 +22,9 @@ export default async function Home() {
       }
     );
     userEmail = data.email;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {
-    // if the token is invalid / expired
+    // if the token is invalid or expired
     redirect("/login");
   }
 
