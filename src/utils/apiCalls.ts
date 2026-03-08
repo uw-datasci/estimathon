@@ -1,4 +1,5 @@
 import axios from "axios";
 
-export const sendSignInInfo = (values: { email: string; password: string }) =>
-  axios.post("/api/login", values);
+export function sendSignInInfo(values: { email: string; password: string }) {
+  return axios.post("/api/login", values);
+}
