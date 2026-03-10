@@ -51,36 +51,41 @@ export async function POST(req: Request) {
   }
 
   // Recalculate team score after successful submission
-  try {
-    // Get all team submissions for score calculation
-    const { data: allSubmissions } = await supabaseAdmin
-      .from("submissions")
-      .select("*")
-      .eq("team_id", teamId);
+  const { data: allSubmissions, error: subError } = await supabaseAdmin
+    .from("submissions")
+    .select("*")
+    .eq("team_id", teamId);
 
-    // Get all questions
-    const { data: questions } = await supabaseAdmin
-      .from("questions")
-      .select("*");
+  const { data: questions, error: qError } = await supabaseAdmin
+    .from("questions")
+    .select("*");
 
-    if (allSubmissions && questions) {
-      const { score, goodIntervals } = calculateTeamScore(
-        allSubmissions,
-        questions
-      );
+  if (subError || qError || !allSubmissions || !questions) {
+    console.error("Failed to fetch data for score recalculation", subError, qError);
+    return NextResponse.json({ error: "Score calculation failed" }, { status: 500 });
+  }
 
-      // Increment submission count by 1 for each submission attempt
-      await supabaseAdmin
-        .from("teams")
-        .update({
-          score,
-          good_interval: goodIntervals,
-          submission_count: currentSubmissionCount + 1,
-        })
-        .eq("id", teamId);
-    }
-  } catch (scoreError) {
-    console.error("Error updating team score:", scoreError);
+  const { score, goodIntervals } = calculateTeamScore(allSubmissions, questions);
+
+  // Optimistic lock: only update if submission_count hasn't changed (prevents race condition from spam clicks)
+  const { data: updateResult, error: updateError } = await supabaseAdmin
+    .from("teams")
+    .update({
+      score,
+      good_interval: goodIntervals,
+      submission_count: currentSubmissionCount + 1,
+    })
+    .eq("id", teamId)
+    .eq("submission_count", currentSubmissionCount)
+    .select();
+
+  if (updateError) {
+    console.error("Failed to update team score", updateError);
+    return NextResponse.json({ error: "Failed to update score" }, { status: 500 });
+  }
+
+  if (!updateResult?.length) {
+    return NextResponse.json({ error: "Concurrent submission detected, please retry" }, { status: 409 });
   }
 
   return NextResponse.json(submission);

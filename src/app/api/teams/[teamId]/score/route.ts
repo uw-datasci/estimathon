@@ -10,7 +10,7 @@ export async function GET(
 
   const { data, error } = await supabaseAdmin
     .from("teams")
-    .select("score, good_interval")
+    .select("score, good_interval, submission_count")
     .eq("id", teamId)
     .single();
 
@@ -21,5 +21,6 @@ export async function GET(
   return NextResponse.json({
     score: data.score ?? 0,
     goodInterval: data.good_interval ?? 0,
+    remaining: 18 - (data.submission_count ?? 0),
   });
 }

@@ -66,9 +66,13 @@ export default function WaitingPage() {
   }, [teamLoading, teamId]);
 
   useEffect(() => {
-    // redirect after event starts
+    // redirect after event starts, with hard-navigation fallback
     if (remaining === 0 && !teamLoading && teamId) {
       router.push("/dashboard");
+      const timeout = setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 5000);
+      return () => clearTimeout(timeout);
     }
   }, [remaining, router, teamLoading, teamId]);
 

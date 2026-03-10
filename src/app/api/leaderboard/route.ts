@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const { data, error } = await supabaseAdmin
       .from("teams")
-      .select("id, code, score, good_interval, submission_count")
+      .select("id, code, score, good_interval, submission_count, members:users(id, name)")
       .order("score", { ascending: true });
 
     if (error) {
