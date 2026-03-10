@@ -10,7 +10,7 @@ export function useScoreInfo(teamId: string | undefined) {
   const fetchScore = useCallback(async () => {
     if (!teamId) return;
     try {
-      const res = await fetch(`/api/submissions/team/${teamId}`);
+      const res = await fetch(`/api/teams/${teamId}/score`);
       if (!res.ok) throw new Error("Failed to fetch score info");
       const data = await res.json();
       setRemainingGuesses(data.remaining);

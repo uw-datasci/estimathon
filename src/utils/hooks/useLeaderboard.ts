@@ -21,19 +21,7 @@ export function useLeaderboard() {
         if (!res.ok) throw new Error("Failed to fetch leaderboard");
         const data = await res.json();
 
-        const enriched = await Promise.all(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (data.leaderboard || []).map(async (entry: any) => {
-            const memberRes = await fetch(`/api/teams/${entry.id}`);
-            const memberData = await memberRes.json();
-            return {
-              ...entry,
-              members: memberData.members || [],
-            };
-          })
-        );
-
-        setLeaderboard(enriched);
+        setLeaderboard(data.leaderboard || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
