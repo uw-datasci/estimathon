@@ -8,7 +8,6 @@ import ScoreInfo from "../../components/ScoreInfo";
 import Image from "next/image";
 import { useQuestions } from "@/utils/hooks/useQuestions";
 import { useSubmissions, Submission } from "@/utils/hooks/useSubmissions";
-import { useScoreInfo } from "@/utils/hooks/useScoreInfo";
 import Modal from "../../components/Modal";
 import { useTimer } from "@/utils/hooks/useTimer";
 import React from "react";
@@ -21,10 +20,12 @@ export default function UserQuestionsClient() {
   const { teamId, teamCode } = useCurrentTeam();
   const { questions } = useQuestions();
   const { submissions } = useSubmissions(teamId ?? undefined);
-  const { remainingGuesses, loading: scoreLoading } = useScoreInfo(
-    teamId ?? undefined
-  );
-  const { score, goodIntervals } = useTeamScore(teamId);
+  const {
+    score,
+    goodIntervals,
+    remainingGuesses,
+    loading: scoreLoading,
+  } = useTeamScore(teamId);
   const [scrollToId, setScrollToId] = useState<string | null>(null);
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const { timeLeft } = useTimer();
