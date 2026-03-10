@@ -30,6 +30,7 @@ export default function UserQuestionsClient() {
   const { timeLeft } = useTimer();
   const [showOutOfGuesses, setShowOutOfGuesses] = useState(false);
   const [showTimeUpModal, setShowTimeUpModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const initialTimerRef = useRef(true);
 
   // Map submissions by question id for fast lookup
@@ -46,11 +47,11 @@ export default function UserQuestionsClient() {
   useEffect(() => {
     if (initialTimerRef.current) {
       initialTimerRef.current = false;
-    } else if (timeLeft === 0 && !scoreLoading) {
+    } else if (timeLeft !== null && timeLeft <= 0) {
       setShowTimeUpModal(true);
       router.push("/leaderboard");
     }
-  }, [timeLeft, router, scoreLoading]);
+  }, [timeLeft, router]);
 
   // Show out of guesses modal when remainingGuesses is 0 and not loading
   React.useEffect(() => {
@@ -71,24 +72,27 @@ export default function UserQuestionsClient() {
     setScrollToId(null);
   }
 
-  // Submission handler
+  // Submission handler — no page reload; Realtime subscriptions push updates
   const handleSubmit = async (questionId: string, min: number, max: number) => {
-    if (!teamId) {
-      console.error("No team ID available");
-      return;
+    if (submitting || !teamId) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          teamId: teamId,
+          questionId,
+          min_value: min,
+          max_value: max,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error("Submission failed");
+      }
+    } finally {
+      setSubmitting(false);
     }
-
-    await fetch("/api/submissions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        teamId: teamId,
-        questionId,
-        min_value: min,
-        max_value: max,
-      }),
-    });
-    window.location.reload();
   };
 
   return (
@@ -190,7 +194,7 @@ export default function UserQuestionsClient() {
                   onSubmit={async (min, max) =>
                     handleSubmit(question.id, min, max)
                   }
-                  disabled={!scoreLoading && remainingGuesses <= 0}
+                  disabled={submitting || (!scoreLoading && remainingGuesses <= 0)}
                 />
               </div>
             ))}
