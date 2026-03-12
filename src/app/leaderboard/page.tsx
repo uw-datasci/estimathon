@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase";
 import LeaderboardClient from "./LeaderboardClient";
@@ -14,15 +16,14 @@ export default async function LeaderboardPage() {
     redirect("/dashboard");
   }
 
-  if (events && events.length) {
+  if (events?.length) {
     const now = new Date();
     const startTime = new Date(events[0].start_time);
     const endTime = new Date(events[0].end_time);
 
     if (now < startTime) {
-      redirect("/waiting"); 
-    }
-    else if (now < endTime) {
+      redirect("/waiting");
+    } else if (now < endTime) {
       redirect("/dashboard");
     }
   }
