@@ -1,43 +1,35 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import { supabaseAdmin } from "@/lib/supabase";
 import UserQuestionsClient from "./UserQuestionsClient";
 
-export default function DashboardPage() {
-  const router = useRouter();
-  const [ready, setReady] = useState(false);
+export default async function DashboardPage() {
+  // only render dashboard if event is live, otherwise redirect to /waiting
+  const { data: events, error } = await supabaseAdmin
+    .from("events")
+    .select("start_time, end_time")
+    .order("start_time", { ascending: false })
+    .limit(1);
 
-  useEffect(() => {
-    async function checkEventStatus() {
-      const res = await fetch("/api/events/status");
-      if (!res.ok) {
-        router.replace("/");
-        return;
-      }
-      const { event } = await res.json();
-      if (!event) {
-        router.replace("/");
-        return;
-      }
-      const now = new Date();
-      const startTime = new Date(event.start_time);
-      const endTime = new Date(event.end_time);
+  if (error) {
+    console.error("Failed to fetch events:", error.message);
+    redirect("/");
+  }
 
-      if (now < startTime) {
-        router.replace("/waiting");
-        return;
-      }
-      if (now > endTime) {
-        router.replace("/leaderboard");
-        return;
-      }
-      setReady(true);
+  if (events && events.length > 0) {
+    const now = new Date();
+    const startTime = new Date(events[0].start_time);
+    const endTime = new Date(events[0].end_time);
+
+    // not yet started or already ended
+    if (now < startTime) {
+      redirect("/waiting");
     }
-    checkEventStatus();
-  }, [router]);
-
-  if (!ready) return null;
+    if (now > endTime) {
+      redirect("/leaderboard");
+    }
+  }
 
   return <UserQuestionsClient />;
 }
