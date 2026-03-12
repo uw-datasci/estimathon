@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TimeLeft from "../../components/TimeLeft";
 import QuestionCard from "../../components/QuestionCard";
 import QuestionGrid from "../../components/QuestionGrid";
@@ -10,7 +10,6 @@ import { useQuestions } from "@/utils/hooks/useQuestions";
 import { useSubmissions, Submission } from "@/utils/hooks/useSubmissions";
 import Modal from "../../components/Modal";
 import { useTimer } from "@/utils/hooks/useTimer";
-import React from "react";
 import { useCurrentTeam } from "@/utils/hooks/useCurrentTeam";
 import { useTeamScore } from "@/utils/hooks/useTeamScore";
 import { useRouter } from "next/navigation";
@@ -195,7 +194,9 @@ export default function UserQuestionsClient() {
                   onSubmit={async (min, max) =>
                     handleSubmit(question.id, min, max)
                   }
-                  disabled={submitting || (!scoreLoading && remainingGuesses <= 0)}
+                  disabled={
+                    submitting || (!scoreLoading && remainingGuesses <= 0)
+                  }
                 />
               </div>
             ))}
