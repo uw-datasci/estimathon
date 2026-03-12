@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { supabase } from "@/lib/supabase-client";
 
 export interface LeaderboardEntry {
   id: string;
@@ -14,23 +15,44 @@ export function useLeaderboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchLeaderboard() {
-      try {
-        const res = await fetch("/api/leaderboard");
-        if (!res.ok) throw new Error("Failed to fetch leaderboard");
-        const data = await res.json();
-
-        setLeaderboard(data.leaderboard || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
-      } finally {
-        setLoading(false);
-      }
+  const fetchLeaderboard = useCallback(async () => {
+    try {
+      const res = await fetch("/api/leaderboard");
+      if (!res.ok) throw new Error("Failed to fetch leaderboard");
+      const data = await res.json();
+      setLeaderboard(data.leaderboard || []);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
     }
-
-    fetchLeaderboard();
   }, []);
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
+
+  // Subscribe to realtime changes on the teams table (score updates)
+  useEffect(() => {
+    const channel = supabase
+      .channel("leaderboard:teams")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "teams",
+        },
+        () => {
+          fetchLeaderboard();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchLeaderboard]);
 
   return { leaderboard, loading, error };
 }

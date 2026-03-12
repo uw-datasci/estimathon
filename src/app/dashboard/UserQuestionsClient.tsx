@@ -18,12 +18,13 @@ export default function UserQuestionsClient() {
   const router = useRouter();
   const { teamId, teamCode } = useCurrentTeam();
   const { questions } = useQuestions();
-  const { submissions } = useSubmissions(teamId ?? undefined);
+  const { submissions, refetch: refetchSubmissions } = useSubmissions(teamId ?? undefined);
   const {
     score,
     goodIntervals,
     remainingGuesses,
     loading: scoreLoading,
+    refetch: refetchScore,
   } = useTeamScore(teamId);
   const [scrollToId, setScrollToId] = useState<string | null>(null);
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -90,6 +91,8 @@ export default function UserQuestionsClient() {
       if (!res.ok) {
         throw new Error("Submission failed");
       }
+      // Immediate refetch for the submitting user; Realtime handles other users
+      await Promise.all([refetchSubmissions(), refetchScore()]);
     } finally {
       setSubmitting(false);
     }
