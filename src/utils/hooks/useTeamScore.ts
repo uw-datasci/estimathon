@@ -68,5 +68,6 @@ export function useTeamScore(teamId: string | null) {
     remainingGuesses,
     loading,
     error,
+    refetch: fetchScore,
   };
 }

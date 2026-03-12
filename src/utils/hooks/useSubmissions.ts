@@ -59,5 +59,5 @@ export function useSubmissions(teamId: string | undefined) {
     };
   }, [teamId, fetchSubmissions]);
 
-  return { submissions, loading, error };
+  return { submissions, loading, error, refetch: fetchSubmissions };
 }
