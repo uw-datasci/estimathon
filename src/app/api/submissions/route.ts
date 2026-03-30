@@ -9,8 +9,16 @@ export async function POST(req: Request) {
   }
 
   // enforce positive, min < max, and not have super large bounds
-  if (min_value <= 0 || max_value <= 0 || min_value > max_value || max_value / min_value > 1000000000) {
-    return NextResponse.json({ error: "Invalid interval values" }, { status: 400 });
+  if (
+    min_value <= 0 ||
+    max_value <= 0 ||
+    min_value > max_value ||
+    max_value / min_value > 1000000
+  ) {
+    return NextResponse.json(
+      { error: "Invalid interval values" },
+      { status: 400 },
+    );
   }
 
   // Check submission count using teams table
@@ -29,7 +37,7 @@ export async function POST(req: Request) {
   if (currentSubmissionCount >= 18) {
     return NextResponse.json(
       { error: "Submission limit reached" },
-      { status: 403 }
+      { status: 403 },
     );
   }
 
@@ -45,7 +53,7 @@ export async function POST(req: Request) {
       },
       {
         onConflict: "team_id,question_id",
-      }
+      },
     )
     .select()
     .single();
@@ -66,11 +74,21 @@ export async function POST(req: Request) {
     .select("*");
 
   if (subError || qError || !allSubmissions || !questions) {
-    console.error("Failed to fetch data for score recalculation", subError, qError);
-    return NextResponse.json({ error: "Score calculation failed" }, { status: 500 });
+    console.error(
+      "Failed to fetch data for score recalculation",
+      subError,
+      qError,
+    );
+    return NextResponse.json(
+      { error: "Score calculation failed" },
+      { status: 500 },
+    );
   }
 
-  const { score, goodIntervals } = calculateTeamScore(allSubmissions, questions);
+  const { score, goodIntervals } = calculateTeamScore(
+    allSubmissions,
+    questions,
+  );
 
   // Optimistic lock: only update if submission_count hasn't changed (prevents race condition from spam clicks)
   const { data: updateResult, error: updateError } = await supabaseAdmin
@@ -86,11 +104,17 @@ export async function POST(req: Request) {
 
   if (updateError) {
     console.error("Failed to update team score", updateError);
-    return NextResponse.json({ error: "Failed to update score" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update score" },
+      { status: 500 },
+    );
   }
 
   if (!updateResult?.length) {
-    return NextResponse.json({ error: "Concurrent submission detected, please retry" }, { status: 409 });
+    return NextResponse.json(
+      { error: "Concurrent submission detected, please retry" },
+      { status: 409 },
+    );
   }
 
   return NextResponse.json(submission);
