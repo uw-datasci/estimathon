@@ -8,6 +8,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
 
+  // enforce positive, min < max, and not have super large bounds
+  if (min_value <= 0 || max_value <= 0 || min_value > max_value || max_value / min_value > 1000000000) {
+    return NextResponse.json({ error: "Invalid interval values" }, { status: 400 });
+  }
+
   // Check submission count using teams table
   const { data: teamData, error: countError } = await supabaseAdmin
     .from("teams")
