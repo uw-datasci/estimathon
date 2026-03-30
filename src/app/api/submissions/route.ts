@@ -13,7 +13,8 @@ export async function POST(req: Request) {
     min_value <= 0 ||
     max_value <= 0 ||
     min_value > max_value ||
-    max_value / min_value > 1000000
+    max_value - min_value > 1000000000 ||
+    max_value / min_value > 100000
   ) {
     return NextResponse.json(
       { error: "Interval bounds are too invalid or too large" },
