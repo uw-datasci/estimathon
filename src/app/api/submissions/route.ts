@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     max_value / min_value > 1000000
   ) {
     return NextResponse.json(
-      { error: "Invalid interval values" },
+      { error: "Interval bounds are too invalid or too large" },
       { status: 400 },
     );
   }
